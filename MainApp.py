@@ -7,6 +7,7 @@ from CandyCrush.CandyCrushGame import CandyCrushGame
 
 root = tk.Tk()
 root.title("TGME")
+# root.geometry("700x700")
 root.resizable(False, False)
 
 container = tk.Frame(root)
@@ -29,8 +30,8 @@ def main():
     tk.Label(
         mainMenuFrame, 
         text="Welcome to the Tile Game Matching Environment!", 
-        font=("Font", 30),
-        anchor="center").pack(pady=10, padx=(24,0))
+        font=("Font", 27),
+        anchor="center").pack(pady=10, padx=20)
     tk.Label(
         mainMenuFrame, 
         text="Please sign up before selecting a game.", 
