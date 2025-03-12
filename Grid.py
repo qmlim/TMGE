@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 class Grid(ABC):
-    def __init__(self, gameGrid):
-        self.gameGrid = gameGrid
+    def __init__(self):
+        pass
 
     @abstractmethod
     def updateGrid(self):

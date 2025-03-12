@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from InputHandler import InputHandler
 
 class Game(ABC):
+    path: str
+
     def __init__(self, playerList):
         self.playerList = playerList
 
