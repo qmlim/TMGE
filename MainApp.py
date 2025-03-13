@@ -90,12 +90,12 @@ def gameSelect():
     tk.Button(
         gameSelectFrame,
         text="Tetris",
-        command=lambda: showFrame(TetrisGame(players, container).generateGrid()),
+        command=lambda: showFrame(TetrisGame(players, container).gameSetUp()),
         width=12).pack(pady=(10, 5))
     tk.Button(
         gameSelectFrame,
         text="CandyCrush",
-        command=lambda: showFrame(CandyCrushGame(players, container).generateGrid()),
+        command=lambda: showFrame(CandyCrushGame(players, container).gameSetUp()),
         width=12).pack(pady=5)
     tk.Button(
         gameSelectFrame,
@@ -160,7 +160,10 @@ def findPlayer(username):
 
 
 def showFrame(frame):
-    frame.tkraise()
+    if frame:
+        frame.tkraise()
+    else:
+        messagebox.showerror("ERROR", "Received None instead of a frame.")
 
 
 
