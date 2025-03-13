@@ -1,6 +1,8 @@
 import tkinter as tk
 import tkinter.messagebox as messagebox
 import Player
+from Tetris.TetrisGame import TetrisGame
+from CandyCrush.CandyCrushGame import CandyCrushGame
 
 
 root = tk.Tk()
@@ -38,17 +40,17 @@ def main():
         mainMenuFrame,
         text="Sign Up",
         command=lambda: showFrame(signUpFrame),
-        width=12).pack(pady=(20, 5))
+        width=15).pack(pady=(20, 5))
     tk.Button(
         mainMenuFrame,
         text="View Player Profile",
         command=lambda: [playerSelect(), showFrame(playerSelectFrame)],
-        width=12).pack(pady=5)
+        width=15).pack(pady=5)
     tk.Button(
         mainMenuFrame,
         text="Select Game",
         command=lambda: showFrame(gameSelectFrame),
-        width=12).pack(pady=5)
+        width=15).pack(pady=5)
 
 
 def signUp():
@@ -88,10 +90,12 @@ def gameSelect():
     tk.Button(
         gameSelectFrame,
         text="Tetris",
+        command=lambda: showFrame(TetrisGame(players, container).gameSetUp()),
         width=12).pack(pady=(10, 5))
     tk.Button(
         gameSelectFrame,
         text="CandyCrush",
+        command=lambda: showFrame(CandyCrushGame(players, container).gameSetUp()),
         width=12).pack(pady=5)
     tk.Button(
         gameSelectFrame,
@@ -156,7 +160,10 @@ def findPlayer(username):
 
 
 def showFrame(frame):
-    frame.tkraise()
+    if frame:
+        frame.tkraise()
+    else:
+        messagebox.showerror("ERROR", "Received None instead of a frame.")
 
 
 

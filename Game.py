@@ -1,13 +1,27 @@
 from abc import ABC, abstractmethod
-from InputHandler import InputHandler
+import tkinter as tk
+
 
 class Game(ABC):
-    def __init__(self, playerList):
-        self.playerList = playerList
+    path: str
 
-    @abstractmethod
-    def generateGrid():
-        pass
+    def __init__(self, playerList, parent):
+        self.playerList = playerList
+        self.parent = parent
+        self.frame = tk.Frame(parent)
+        self.frame.grid(row=0, column=0, sticky="nsew")
+        self.grid = None
+
+    def gameSetUp(self):
+        self.generateGridFrame()
+        self.handleInput()
+        return self.frame
+
+    def generateGridFrame(self):
+        for i in range(self.grid.height):
+            for j in range(self.grid.width):
+                tk.Button(self.frame, text=" ", width=2).grid(row=i, column=j)
+        return self.frame
     
     @abstractmethod
     def handleInput():
