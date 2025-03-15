@@ -5,9 +5,13 @@ class ScoreSystem(ABC):
         self.points = points
 
     @abstractmethod
+    def calculateGameScore(self):
+        pass
+    
+    @abstractmethod
     def updateScore(self):
         pass
 
     @abstractmethod
-    def updatePlayer():
+    def updatePlayerScore(self):
         pass

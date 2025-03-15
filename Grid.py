@@ -13,3 +13,11 @@ class Grid(ABC):
     @abstractmethod
     def isEmpty(self):
         pass
+
+    @abstractmethod
+    def clearRows(self):
+        pass
+
+    @abstractmethod
+    def clearColumns(self):
+        pass
