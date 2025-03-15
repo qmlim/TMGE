@@ -8,5 +8,5 @@ class CandyCrushGame(Game):
         super().__init__(playerList, parent)
         self.grid = CandyCrushGrid()
 
-    def handleInput():
+    def handleInput(self):
         pass

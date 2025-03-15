@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import tkinter as tk
+from State import State
 
 
 class Game(ABC):
@@ -8,9 +9,10 @@ class Game(ABC):
     def __init__(self, playerList, parent):
         self.playerList = playerList
         self.parent = parent
+        self.gameState = State.RUNNING
         self.frame = tk.Frame(parent)
         self.frame.grid(row=0, column=0, sticky="nsew")
-        self.grid = None
+        self.gameGridType = None
 
     def gameSetUp(self):
         self.generateGridFrame()
@@ -18,11 +20,19 @@ class Game(ABC):
         return self.frame
 
     def generateGridFrame(self):
-        for i in range(self.grid.height):
-            for j in range(self.grid.width):
+        for i in range(self.gameGridType.height):
+            for j in range(self.gameGridType.width):
                 tk.Button(self.frame, text=" ", width=2).grid(row=i, column=j)
         return self.frame
-    
+
     @abstractmethod
-    def handleInput():
+    def gamePlay(self):
+        pass
+
+    @abstractmethod
+    def ruleChecking(self):
+        pass
+
+    @abstractmethod
+    def handleInput(self):
         pass
