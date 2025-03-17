@@ -18,17 +18,17 @@ class CandyCrushGame(Game):
         return self.frame
     
     def createGrid(self):
+        self.gameGridType.initializeGrid() # put the tile on the grid
         self.tiles = []
         self.tile_frames = []
         for i in range(self.gameGridType.height):
             tile_row = []
             frame_row = []
-            
             for j in range(self.gameGridType.width):
-                tile = CandyCrushTile(None, (i, j))
+                tile = self.gameGridType.getTileAt(i, j) 
                 tile_row.append(tile)
                 
-                colored_frame = tk.Frame(
+                colored_frame = tk.Frame( # style of the tile
                     self.frame,
                     bg=tile.getColor(),
                     width=50,
@@ -36,10 +36,8 @@ class CandyCrushGame(Game):
                     bd=3,
                     relief=tk.RAISED
                 )
-                
                 colored_frame.grid(row=i, column=j, padx=2, pady=2)
                 frame_row.append(colored_frame)
-                self.gameGridType.setTileAt(i, j, tile)
             
             self.tiles.append(tile_row)
             self.tile_frames.append(frame_row)

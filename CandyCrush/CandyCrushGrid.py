@@ -5,7 +5,14 @@ class CandyCrushGrid:
     def __init__(self):
         self.height = 9
         self.width = 9
-        self.grid = [[None for _ in range(self.width)] for _ in range(self.height)]
+        self.grid = [[None for _ in range(self.width)] for _ in range(self.height)] # create a 9x9 grid
+
+    def initializeGrid(self): # put the tiles on the grid
+        for i in range(self.height):
+            for j in range(self.width):
+                tile = CandyCrushTile(None, (i, j))
+                self.setTileAt(i, j, tile)
+        return self.grid
     
     def setTileAt(self, row, col, tile):
         if 0 <= row < self.height and 0 <= col < self.width:
