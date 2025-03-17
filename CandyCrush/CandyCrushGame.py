@@ -51,7 +51,12 @@ class CandyCrushGame(Game):
             self.selected_tile = clicked_tile
             self.selected_position = (row, col)
             clicked_frame.config(relief=tk.SUNKEN, bd=5) # select the tile
-       
+        else: # if the same tile is selected
+            if self.selected_position == (row, col):
+                self.selected_tile = None
+                self.selected_position = None
+                clicked_frame.config(relief=tk.RAISED, bd=3) # unselect the tile
+            
     
     
     def gamePlay(self):
