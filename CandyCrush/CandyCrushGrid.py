@@ -11,13 +11,15 @@ class CandyCrushGrid(Grid):
         for i in range(self.height):
             for j in range(self.width):
                 tile = CandyCrushTile(None, (i, j))
-                self.setTileAt(i, j, tile)
+                self.setTileAt((i, j), tile)
         return self.grid
     
-    def setTileAt(self, row, col, tile):
+    def setTileAt(self, position, tile):
+        row, col = position
         self.grid[row][col] = tile
     
-    def getTileAt(self, row, col):
+    def getTileAt(self, position):
+        row, col = position
         return self.grid[row][col]
     
     def updateGrid(self, new_grid=None):
