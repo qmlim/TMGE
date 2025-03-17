@@ -87,21 +87,30 @@ def gameSelect():
         gameSelectFrame,
         text="Select the game to play",
         font=("Font", 15)).pack(pady=(20, 0))
+
+    def start_tetris():
+        tetris_game = TetrisGame(players, container)  # Create Tetris game instance
+        tetris_game.bind_keys(root)  # Bind key events
+        showFrame(tetris_game.gameSetUp())  # Start the game
+
     tk.Button(
         gameSelectFrame,
         text="Tetris",
-        command=lambda: showFrame(TetrisGame(players, container).gameSetUp()),
+        command=start_tetris,  # Call start_tetris instead of directly instantiating
         width=12).pack(pady=(10, 5))
+
     tk.Button(
         gameSelectFrame,
         text="CandyCrush",
         command=lambda: showFrame(CandyCrushGame(players, container).gameSetUp()),
         width=12).pack(pady=5)
+
     tk.Button(
         gameSelectFrame,
         text="Back",
         command=lambda: showFrame(mainMenuFrame),
         width=12).pack(pady=30)
+
     
 
 def playerSelect():

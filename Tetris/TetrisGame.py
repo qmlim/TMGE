@@ -30,5 +30,10 @@ class TetrisGame(Game):
         if checkResults[-1]:
             self.gameGridType.updateGrid(checkResults[-1])
 
-    def handleInput(self):
-        pass
+    def handleInput(self, event=None):
+        if event:
+            if event.keysym in ("w", "a", "s", "d"):
+                print(f"Key pressed: {event.keysym}")
+
+    def bind_keys(self, root):
+        root.bind("<KeyPress>", self.handleInput)
