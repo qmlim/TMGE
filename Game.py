@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import tkinter as tk
-from State import State
+from TMGE.State import State
 
 
 class Game(ABC):

@@ -1,19 +1,22 @@
-from Game import Game 
+from TMGE.Game import Game 
+from TMGE.State import State
+from TMGE.CandyCrush.CandyCrushGrid import CandyCrushGrid
+from TMGE.CandyCrush.CandyCrushRules import CandyCrushRules
 import tkinter as tk
-from State import State
 import random
-from CandyCrush.CandyCrushGrid import CandyCrushGrid
 class CandyCrushGame(Game):
     def __init__(self, playerList, parent, mainMenuFrame=None, showFrameFunc=None):
         super().__init__(playerList, parent, mainMenuFrame, showFrameFunc)
         self.gameGridType = CandyCrushGrid()
-        self.tiles = []
+        self.ruleSystem = CandyCrushRules(self.gameGridType)
+        self.tiles = [] # 2-d array
         self.selected_tile = None
         self.selected_position = None
     
     def gameSetUp(self):
         self.frame = super().gameSetUp()
         self.createGrid()
+        self.checkForMatches()
         return self.frame
     
     def createGrid(self):
@@ -94,3 +97,8 @@ class CandyCrushGame(Game):
 
     def handleInput(self):
         pass
+
+    def checkForMatches(self):
+        matches = self.ruleSystem.checkRows()
+        if matches:
+            print(matches)
