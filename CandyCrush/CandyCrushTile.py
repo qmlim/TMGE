@@ -1,17 +1,30 @@
-from Tile import Tile
 import random
 
-class CandyCrushTile(Tile):
+class CandyCrushTile:
+    COLORS = {
+        1: "#FF3333", 
+        2: "#33CC33",  
+        3: "#3366FF",  
+        4: "#FFCC00",  
+        5: "#CC33FF",  
+        6: "#00CCCC"  
+    }
+    
+    COLOR_NAMES = {
+        1: "red",
+        2: "green",
+        3: "blue",
+        4: "yellow",
+        5: "purple",
+        6: "teal"
+    }
     
     def __init__(self, color_id=None, position=None):
         if color_id is None:
             color_id = random.randint(1, 6)
-        
-        color = self.COLORS[color_id]
-        
-        super().__init__(color_id, position)
-        self.color = color
+        self.color = self.COLORS[color_id]
         self.color_id = color_id
+        self.position = position
     
     def updatePosition(self, new_position):
         self.position = new_position
@@ -23,4 +36,4 @@ class CandyCrushTile(Tile):
         return self.color_id
     
     def getColorName(self):
-        return self.COLOR_NAMES[self.color_id] 
+        return self.COLOR_NAMES[self.color_id]
