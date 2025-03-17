@@ -89,14 +89,14 @@ def gameSelect():
         font=("Font", 15)).pack(pady=(20, 0))
 
     def start_tetris():
-        tetris_game = TetrisGame(players, container)  # Create Tetris game instance
-        tetris_game.bind_keys(root)  # Bind key events
-        showFrame(tetris_game.gameSetUp())  # Start the game
+        tetris_game = TetrisGame(players, container)
+        tetris_game.bind_keys(root)
+        showFrame(tetris_game.gameSetUp())
 
     tk.Button(
         gameSelectFrame,
         text="Tetris",
-        command=start_tetris,  # Call start_tetris instead of directly instantiating
+        command=start_tetris,
         width=12).pack(pady=(10, 5))
 
     tk.Button(
