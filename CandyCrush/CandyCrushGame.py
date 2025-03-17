@@ -10,6 +10,7 @@ class CandyCrushGame(Game):
         self.tiles = []
         self.tile_frames = []
         self.selected_tile = None
+        self.selected_position = None
     
     def gameSetUp(self):
         self.frame = super().gameSetUp()
@@ -36,11 +37,23 @@ class CandyCrushGame(Game):
                     relief=tk.RAISED
                 )
                 colored_frame.grid(row=i, column=j, padx=2, pady=2)
+                colored_frame.bind("<Button-1>", lambda event, row=i, col=j: self.onTileClick(event, row, col))
                 frame_row.append(colored_frame)
             
             self.tiles.append(tile_row)
             self.tile_frames.append(frame_row)
+
+    def onTileClick(self, event, row, col):
+        clicked_tile = self.gameGridType.getTileAt(row, col)
+        clicked_frame = self.tile_frames[row][col]
         
+        if self.selected_tile is None: # if no tile is selected
+            self.selected_tile = clicked_tile
+            self.selected_position = (row, col)
+            clicked_frame.config(relief=tk.SUNKEN, bd=5) # select the tile
+       
+    
+    
     def gamePlay(self):
         self.gameState = State.RUNNING
         return self.gameGridType
