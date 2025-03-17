@@ -19,12 +19,13 @@ class CandyCrushTile:
         6: "teal"
     }
     
-    def __init__(self, color_id=None, position=None):
+    def __init__(self, color_id=None, position=None, frame=None):
         if color_id is None:
             color_id = random.randint(1, 6)
         self.color = self.COLORS[color_id]
         self.color_id = color_id
         self.position = position
+        self.frame = frame
     
     def updatePosition(self, new_position):
         self.position = new_position
@@ -37,3 +38,9 @@ class CandyCrushTile:
     
     def getColorName(self):
         return self.COLOR_NAMES[self.color_id]
+    
+    def setFrame(self, frame):
+        self.frame = frame
+    
+    def getFrame(self):
+        return self.frame
