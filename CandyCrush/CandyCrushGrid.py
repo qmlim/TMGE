@@ -42,27 +42,16 @@ class CandyCrushGrid(Grid):
         return self.grid[row][col]
     
     def updateGrid(self, matches):
-        if matches:
-            for match in matches:
-                self.clearMatches(match)
+        pass
     
     def isEmpty(self):
-        for i in range(self.height):
-            for j in range(self.width):
-                if self.grid[i][j] and self.grid[i][j].getColorId() != 0:
-                    return False
-        return True
+        pass
     
     def clearMatches(self, match_positions):
-        for position in match_positions:
-            tile = self.getTileAt(position)
-            if tile:
-                tile.clearTile()
+        pass
 
     def clearRows(self, matches):
-        for match in matches:
-            self.clearMatches(match)
-    
+        pass
+
     def clearColumns(self, matches):
-        for match in matches:
-            self.clearMatches(match)
+        pass
