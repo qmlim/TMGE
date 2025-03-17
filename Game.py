@@ -10,20 +10,11 @@ class Game(ABC):
         self.playerList = playerList
         self.parent = parent
         self.gameState = State.RUNNING
-        self.frame = tk.Frame(parent)
-        self.frame.grid(row=0, column=0, sticky="nsew")
         self.gameGridType = None
 
+    @abstractmethod
     def gameSetUp(self):
-        self.generateGridFrame()
-        self.handleInput()
-        return self.frame
-
-    def generateGridFrame(self):
-        for i in range(self.gameGridType.height):
-            for j in range(self.gameGridType.width):
-                tk.Button(self.frame, text=" ", width=2).grid(row=i, column=j)
-        return self.frame
+        pass
 
     @abstractmethod
     def gamePlay(self):

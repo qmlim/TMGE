@@ -90,19 +90,26 @@ def gameSelect():
     tk.Button(
         gameSelectFrame,
         text="Tetris",
-        command=lambda: showFrame(TetrisGame(players, container).gameSetUp()),
+        command=lambda: startTetrisGame(),
         width=12).pack(pady=(10, 5))
     tk.Button(
         gameSelectFrame,
         text="CandyCrush",
-        command=lambda: showFrame(CandyCrushGame(players, container).gameSetUp()),
+        command=lambda: startCandyGame(),
         width=12).pack(pady=5)
     tk.Button(
         gameSelectFrame,
         text="Back",
         command=lambda: showFrame(mainMenuFrame),
         width=12).pack(pady=30)
-    
+
+def startTetrisGame():
+    global tetrisGame
+    tetrisGame = TetrisGame(players, container)
+    tetrisGame.gamePlay()
+
+def startCandyGame():
+    pass
 
 def playerSelect():
     for widget in playerSelectFrame.winfo_children():
