@@ -1,5 +1,6 @@
 class CandyCrushTile:
     COLOR_MAP = {
+        0: "#FFFFFF", 
         1: "#FF0000",
         2: "#00FF00",
         3: "#0000FF",
