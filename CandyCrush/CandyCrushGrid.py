@@ -1,7 +1,7 @@
 from Grid import Grid
 from CandyCrush.CandyCrushTile import CandyCrushTile
 import random
-class CandyCrushGrid:
+class CandyCrushGrid(Grid):
     def __init__(self):
         self.height = 9
         self.width = 9

@@ -2,7 +2,6 @@ from Game import Game
 import tkinter as tk
 from State import State
 import random
-from CandyCrush.CandyCrushTile import CandyCrushTile
 from CandyCrush.CandyCrushGrid import CandyCrushGrid
 class CandyCrushGame(Game):
     def __init__(self, playerList, parent, mainMenuFrame=None, showFrameFunc=None):
