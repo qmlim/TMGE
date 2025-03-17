@@ -66,7 +66,6 @@ class CandyCrushGame(Game):
             self.selected_tile = clicked_tile
             self.selected_position = clicked_position
             clicked_frame.config(relief=tk.SUNKEN, bd=5)
-            print(f"Selected first tile at {clicked_position}")
         else:
             # Second selection
             if self.selected_position == clicked_position:
