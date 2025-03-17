@@ -1,9 +1,8 @@
 import tkinter as tk
 import tkinter.messagebox as messagebox
-import Player
-from Tetris.TetrisGame import TetrisGame
-from CandyCrush.CandyCrushGame import CandyCrushGame
-
+from TMGE.Player import Player
+from TMGE.Tetris.TetrisGame import TetrisGame
+from TMGE.CandyCrush.CandyCrushGame import CandyCrushGame
 
 root = tk.Tk()
 root.title("TGME")
