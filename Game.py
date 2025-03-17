@@ -17,7 +17,7 @@ class Game(ABC):
         self.gameGridType = None
 
     def gameSetUp(self):
-        self.generateGridFrame()
+        # self.generateGridFrame()
         self.handleInput()
         self.backButton()
         return self.frame

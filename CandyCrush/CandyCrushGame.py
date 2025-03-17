@@ -14,54 +14,36 @@ class CandyCrushGame(Game):
     
     def gameSetUp(self):
         self.frame = super().gameSetUp()
-        self.placeTilesOnGrid()
+        self.createGrid()
         return self.frame
     
-    def placeTilesOnGrid(self):
+    def createGrid(self):
         self.tiles = []
         self.tile_frames = []
-        button_positions = []
-        
-        for widget in self.frame.winfo_children():
-            if isinstance(widget, tk.Button) and widget.cget('text') == " ":
-                grid_info = widget.grid_info()
-                row, col = int(grid_info['row']), int(grid_info['column'])
-                button_positions.append((widget, row, col))
-        
         for i in range(self.gameGridType.height):
-            self.tiles.append([None] * self.gameGridType.width)
-            self.tile_frames.append([None] * self.gameGridType.width)
+            tile_row = []
+            frame_row = []
+            
+            for j in range(self.gameGridType.width):
+                tile = CandyCrushTile(None, (i, j))
+                tile_row.append(tile)
+                
+                colored_frame = tk.Frame(
+                    self.frame,
+                    bg=tile.getColor(),
+                    width=50,
+                    height=30,
+                    bd=3,
+                    relief=tk.RAISED
+                )
+                
+                colored_frame.grid(row=i, column=j, padx=2, pady=2)
+                frame_row.append(colored_frame)
+                self.gameGridType.setTileAt(i, j, tile)
+            
+            self.tiles.append(tile_row)
+            self.tile_frames.append(frame_row)
         
-        for widget, row, col in button_positions:
-            button_width = widget.winfo_reqwidth()
-            button_height = widget.winfo_reqheight()
-            grid_info = widget.grid_info()
-            
-            widget.destroy()
-            
-            tile = CandyCrushTile(None, (row, col))
-            self.tiles[row][col] = tile
-            
-            colored_frame = tk.Frame(
-                self.frame,
-                bg=tile.getColor(),
-                width=button_width,
-                height=button_height,
-                bd=3,
-                relief=tk.RAISED
-            )
-
-            colored_frame.grid(
-                row=row, 
-                column=col, 
-                padx=2, 
-                pady=2, 
-                sticky=grid_info.get('sticky', '')
-            )
-
-            self.tile_frames[row][col] = colored_frame
-            self.gameGridType.setTileAt(row, col, tile)
-    
     def gamePlay(self):
         self.gameState = State.RUNNING
         return self.gameGridType
