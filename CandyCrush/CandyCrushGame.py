@@ -124,16 +124,8 @@ class CandyCrushGame(Game):
             self.frame.after(200, lambda: self.swapTilesBack(p1, p2))
         
     def swapTilesBack(self, p1, p2):
-        if p1 is None or p2 is None:
-            self.is_animating = False
-            return
-        
         tile1 = self.gameGridType.getTileAt(p1)
         tile2 = self.gameGridType.getTileAt(p2)
-        
-        if tile1 is None or tile2 is None:
-            self.is_animating = False
-            return
         
         temp_color_id = tile1.getColorId()
         tile1.color_id = tile2.getColorId()
@@ -143,18 +135,14 @@ class CandyCrushGame(Game):
         tile1.color = tile2.color
         tile2.color = temp_color
         
-        if tile1.getFrame():
-            tile1.getFrame().config(bg=tile1.getColor())
-        if tile2.getFrame():
-            tile2.getFrame().config(bg=tile2.getColor())
+        tile1.getFrame().config(bg=tile1.getColor())
+        tile2.getFrame().config(bg=tile2.getColor())
         
         self.is_animating = False
 
     def checkForMatches(self):
-        """Check for matches and process them"""
         matches = self.ruleSystem.findMatches()
         if matches:
-            print(f"Found initial matches: {len(matches)} sets")
             self.clearMatches(matches)
         else:
             self.is_animating = False
@@ -163,44 +151,26 @@ class CandyCrushGame(Game):
         if not matches:
             self.is_animating = False
             return
-        # Count total matched tiles for scoring
-        total_matched = 0
         
-        # Store match positions for delayed removal
+        total_matched = 0
         positions_to_remove = []
         
         for match in matches:
             total_matched += len(match)
-            
-            # Visual indication of matches with a flash effect
             for position in match:
-                tile = self.gameGridType.getTileAt(position)
-                if tile:
-                    frame = tile.getFrame()
-                    # Flash effect - using lambda with default arguments to capture current values
-                    self.frame.after(0, lambda f=frame: f.config(bg="#FFFFFF"))
-                    self.frame.after(200, lambda f=frame, t=tile: f.config(bg=t.getColor()))
-                    positions_to_remove.append(position)
+                positions_to_remove.append(position)
         
-        # Update score - basic scoring: 10 points per matched tile
         self.score += total_matched * 10
-        print(f"Added {total_matched * 10} points, new score: {self.score}")
-        
-        # Update score display
-        self.frame.after(300, self.updateScoreDisplay)
-        
-        # Clear tiles after the flash effect
-        self.frame.after(400, lambda: self.actuallyRemoveMatches(positions_to_remove))
+        self.updateScoreDisplay()
+        self.removeMatches(positions_to_remove)
     
-    def actuallyRemoveMatches(self, positions):
+    def removeMatches(self, positions):
         for position in positions:
             tile = self.gameGridType.getTileAt(position)
-            if tile:
-                tile.color_id = 0
-                tile.color = "#FFFFFF"
-                if tile.getFrame():
-                    tile.getFrame().config(bg=tile.getColor())
-        
+            tile.color_id = 0
+            tile.color = "#FFFFFF"
+            tile.getFrame().config(bg=tile.getColor())
+            tile.getFrame().config(bg=tile.getColor())
         self.is_animating = False
     
     def updateScoreDisplay(self):
