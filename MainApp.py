@@ -90,12 +90,12 @@ def gameSelect():
     tk.Button(
         gameSelectFrame,
         text="Tetris",
-        command=lambda: TetrisGame(),
+        command=lambda: startTetrisGame(),
         width=12).pack(pady=(10, 5))
     tk.Button(
         gameSelectFrame,
         text="CandyCrush",
-        command=lambda: CandyCrushGame(),
+        command=lambda: startCandyCrushGame(),
         width=12).pack(pady=5)
     tk.Button(
         gameSelectFrame,
@@ -103,13 +103,13 @@ def gameSelect():
         command=lambda: showFrame(mainMenuFrame),
         width=12).pack(pady=30)
 
-def CandyCrushGame():
+def startCandyCrushGame():
     candyCrushGame = CandyCrushGame(players, container, mainMenuFrame, showFrame)
     candyCrushFrame = candyCrushGame.gameSetUp()
     frames.append(candyCrushFrame)
     showFrame(candyCrushFrame)
 
-def TetrisGame():
+def startTetrisGame():
     tetrisGame = TetrisGame(players, container, mainMenuFrame, showFrame)
     tetrisFrame = tetrisGame.gameSetUp()
     frames.append(tetrisFrame)

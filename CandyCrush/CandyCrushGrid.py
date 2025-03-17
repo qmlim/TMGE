@@ -9,3 +9,9 @@ class CandyCrushGrid(Grid):
 
     def isEmpty(self):
         pass
+
+    def clearRows(self):
+        pass
+
+    def clearColumns(self):
+        pass
