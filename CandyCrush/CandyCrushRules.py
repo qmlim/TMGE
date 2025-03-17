@@ -36,8 +36,8 @@ class CandyCrushRules(RuleSystem):
                 else:
                     if len(current_match) >= self.min_match:
                         matches.append(current_match)
-                    current_color = tile.getColorId() if tile else None
-                    current_match = [(row, col)] if tile else []
+                    current_color = tile.getColorId()
+                    current_match = [(row, col)]
             
             if len(current_match) >= self.min_match:
                 matches.append(current_match)

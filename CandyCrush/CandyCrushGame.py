@@ -12,6 +12,8 @@ class CandyCrushGame(Game):
         self.tiles = [] # 2-d array
         self.selected_tile = None
         self.selected_position = None
+        self.animation_speed = 100
+        self.is_animating = False
     
     def gameSetUp(self):
         self.frame = super().gameSetUp()
@@ -72,7 +74,7 @@ class CandyCrushGame(Game):
         row2, col2 = p2
         return (row1 == row2 and abs(col1 - col2) == 1) or (col1 == col2 and abs(row1 - row2) == 1) # horizontal or vertical adjacent
     
-    def swapTiles(self, p1, p2):
+    def swapTiles(self, p1, p2, swap_back=False):
         tile1 = self.gameGridType.getTileAt(p1)
         tile2 = self.gameGridType.getTileAt(p2)
         
@@ -88,17 +90,22 @@ class CandyCrushGame(Game):
         tile1.getFrame().config(bg=tile1.getColor())
         tile2.getFrame().config(bg=tile2.getColor())
 
+        if swap_back:
+            self.frame.after(300, lambda: self.swapTiles(p1, p2, swap_back=False))
+        else:
+            self.is_animating = False
+
+    def swapTilesBack(self, p1, p2):
+        self.swapTiles(p1, p2)
+        
+        self.is_animating = False
+
     def gamePlay(self):
         self.gameState = State.RUNNING
         return self.gameGridType
 
     def ruleChecking(self):
-        pass
+        return self.ruleSystem.hasMatches()
 
     def handleInput(self):
         pass
-
-    def checkForMatches(self):
-        matches = self.ruleSystem.checkRows()
-        if matches:
-            print(matches)

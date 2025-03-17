@@ -1,46 +1,33 @@
-import random
-
 class CandyCrushTile:
-    COLORS = {
-        1: "#FF3333", 
-        2: "#33CC33",  
-        3: "#3366FF",  
-        4: "#FFCC00",  
-        5: "#CC33FF",  
-        6: "#00CCCC"  
+    COLOR_MAP = {
+        1: "#FF0000",
+        2: "#00FF00",
+        3: "#0000FF",
+        4: "#FFFF00",
+        5: "#FF00FF",
+        6: "#00FFFF",
     }
     
-    COLOR_NAMES = {
-        1: "red",
-        2: "green",
-        3: "blue",
-        4: "yellow",
-        5: "purple",
-        6: "teal"
-    }
-    
-    def __init__(self, color_id=None, position=None, frame=None):
-        if color_id is None:
-            color_id = random.randint(1, 6)
-        self.color = self.COLORS[color_id]
+    def __init__(self, color_id, position):
         self.color_id = color_id
         self.position = position
-        self.frame = frame
-    
-    def updatePosition(self, new_position):
-        self.position = new_position
-    
-    def getColor(self):
-        return self.color
+        self.color = self.COLOR_MAP.get(color_id, "#FFFFFF") # default white
+        self.frame = None
     
     def getColorId(self):
         return self.color_id
     
-    def getColorName(self):
-        return self.COLOR_NAMES[self.color_id]
+    def getColor(self):
+        return self.color
     
-    def setFrame(self, frame):
-        self.frame = frame
+    def getPosition(self):
+        return self.position
+    
+    def setPosition(self, position):
+        self.position = position
     
     def getFrame(self):
         return self.frame
+    
+    def setFrame(self, frame):
+        self.frame = frame

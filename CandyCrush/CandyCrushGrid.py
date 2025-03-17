@@ -41,14 +41,14 @@ class CandyCrushGrid(Grid):
         row, col = position
         return self.grid[row][col]
     
-    def updateGrid(self, new_grid=None):
+    def updateGrid(self, matches=None):
         pass
     
     def isEmpty(self):
         pass
     
-    def clearRows(self):
+    def clearRows(self, matches):
         pass
     
-    def clearColumns(self):
+    def clearColumns(self, matches):
         pass
