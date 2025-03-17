@@ -15,13 +15,12 @@ class CandyCrushGame(Game):
         self.selected_position = None
         self.animation_speed = 100
         self.is_animating = False
-        self.score = 0  # Initialize the score
+        self.score = 0
     
     def gameSetUp(self):
         self.frame = super().gameSetUp()
         self.createGrid()
         
-        # Add score display
         self.score_label = tk.Label(self.frame, text=f"Score: {self.score}", font=("Arial", 14))
         self.score_label.grid(row=self.gameGridType.height + 1, columnspan=self.gameGridType.width, pady=10)
         
@@ -53,9 +52,13 @@ class CandyCrushGame(Game):
     def onTileClick(self, event, row, col):
         if self.is_animating:
             return
-            
+        
         clicked_position = (row, col)
         clicked_tile = self.gameGridType.getTileAt(clicked_position)
+        
+        if clicked_tile is None or clicked_tile.getColorId() == 0:
+            return
+            
         clicked_frame = clicked_tile.getFrame()
         
         if self.selected_tile is None:
@@ -63,6 +66,7 @@ class CandyCrushGame(Game):
             self.selected_tile = clicked_tile
             self.selected_position = clicked_position
             clicked_frame.config(relief=tk.SUNKEN, bd=5)
+            print(f"Selected first tile at {clicked_position}")
         else:
             # Second selection
             if self.selected_position == clicked_position:
@@ -74,56 +78,36 @@ class CandyCrushGame(Game):
                 if self.areAdjacent(self.selected_position, clicked_position):
                     # If adjacent, swap tiles
                     self.selected_tile.getFrame().config(relief=tk.RAISED, bd=3)
-                    
-                    # Store positions for later use
                     pos1 = self.selected_position
                     pos2 = clicked_position
-                    
-                    # Reset selection before animation
+
                     self.selected_tile = None
                     self.selected_position = None
-                    
-                    # Set animating flag to prevent additional clicks
                     self.is_animating = True
                     
-                    # Perform the swap
                     self.swapTiles(pos1, pos2)
-                    
-                    # Check for matches after the swap
-                    self.frame.after(300, lambda: self.checkAfterSwap(pos1, pos2))
+                    self.frame.after(300, lambda p1=pos1, p2=pos2: self.checkAfterSwap(p1, p2))
                 else:
                     # Not adjacent, update selection to new tile
                     self.selected_tile.getFrame().config(relief=tk.RAISED, bd=3)
                     self.selected_tile = clicked_tile
                     self.selected_position = clicked_position
                     clicked_frame.config(relief=tk.SUNKEN, bd=5)
+                    print(f"Changed selection to tile at {clicked_position}")
 
     def areAdjacent(self, p1, p2):
-        if p1 is None or p2 is None:
-            return False
-            
         row1, col1 = p1
         row2, col2 = p2
         return (row1 == row2 and abs(col1 - col2) == 1) or (col1 == col2 and abs(row1 - row2) == 1) # horizontal or vertical adjacent
     
     def swapTiles(self, p1, p2):
-        if p1 is None or p2 is None:
-            self.is_animating = False
-            return
-            
         tile1 = self.gameGridType.getTileAt(p1)
         tile2 = self.gameGridType.getTileAt(p2)
-        
-        if tile1 is None or tile2 is None:
-            self.is_animating = False
-            return
             
-        # Swap color IDs
         temp_color_id = tile1.getColorId()
         tile1.color_id = tile2.getColorId()
         tile2.color_id = temp_color_id
         
-        # Swap colors
         temp_color = tile1.color
         tile1.color = tile2.color
         tile2.color = temp_color
@@ -133,42 +117,52 @@ class CandyCrushGame(Game):
         tile2.getFrame().config(bg=tile2.getColor())
 
     def checkAfterSwap(self, p1, p2):
-        """Check for matches after swapping tiles"""
-        if p1 is None or p2 is None:
-            self.is_animating = False
-            return
-            
         matches = self.ruleSystem.findMatches()
         if matches:
-            # If there are matches, clear them
             self.clearMatches(matches)
         else:
-            # If no matches, swap back
-            self.swapTilesBack(p1, p2)
+            self.frame.after(200, lambda: self.swapTilesBack(p1, p2))
         
     def swapTilesBack(self, p1, p2):
-        """Swap tiles back if no matches were found"""
         if p1 is None or p2 is None:
             self.is_animating = False
             return
-            
-        self.swapTiles(p1, p2)
+        
+        tile1 = self.gameGridType.getTileAt(p1)
+        tile2 = self.gameGridType.getTileAt(p2)
+        
+        if tile1 is None or tile2 is None:
+            self.is_animating = False
+            return
+        
+        temp_color_id = tile1.getColorId()
+        tile1.color_id = tile2.getColorId()
+        tile2.color_id = temp_color_id
+        
+        temp_color = tile1.color
+        tile1.color = tile2.color
+        tile2.color = temp_color
+        
+        if tile1.getFrame():
+            tile1.getFrame().config(bg=tile1.getColor())
+        if tile2.getFrame():
+            tile2.getFrame().config(bg=tile2.getColor())
+        
         self.is_animating = False
 
     def checkForMatches(self):
         """Check for matches and process them"""
         matches = self.ruleSystem.findMatches()
         if matches:
+            print(f"Found initial matches: {len(matches)} sets")
             self.clearMatches(matches)
         else:
             self.is_animating = False
         
     def clearMatches(self, matches):
-        """Clear matched tiles and update score"""
         if not matches:
             self.is_animating = False
             return
-        
         # Count total matched tiles for scoring
         total_matched = 0
         
@@ -190,6 +184,7 @@ class CandyCrushGame(Game):
         
         # Update score - basic scoring: 10 points per matched tile
         self.score += total_matched * 10
+        print(f"Added {total_matched * 10} points, new score: {self.score}")
         
         # Update score display
         self.frame.after(300, self.updateScoreDisplay)
@@ -198,20 +193,17 @@ class CandyCrushGame(Game):
         self.frame.after(400, lambda: self.actuallyRemoveMatches(positions_to_remove))
     
     def actuallyRemoveMatches(self, positions):
-        """Actually remove the matched tiles after the visual effect"""
         for position in positions:
             tile = self.gameGridType.getTileAt(position)
             if tile:
-                # Change the color to white (empty)
                 tile.color_id = 0
                 tile.color = "#FFFFFF"
-                tile.getFrame().config(bg=tile.getColor())
+                if tile.getFrame():
+                    tile.getFrame().config(bg=tile.getColor())
         
-        # Set this to false to allow interaction again
         self.is_animating = False
     
     def updateScoreDisplay(self):
-        """Update the score display"""
         if hasattr(self, 'score_label'):
             self.score_label.config(text=f"Score: {self.score}")
 

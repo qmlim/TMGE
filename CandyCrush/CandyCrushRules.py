@@ -12,6 +12,13 @@ class CandyCrushRules(RuleSystem):
             current_color = None
             for col in range(self.gameGrid.width):
                 tile = self.gameGrid.getTileAt((row, col))
+                if tile.getColorId() == 0:
+                    if len(current_match) >= self.min_match:
+                        matches.append(current_match)
+                    current_match = []
+                    current_color = None
+                    continue
+                
                 if current_color is not None and tile.getColorId() == current_color: # p1 match p2 color
                     current_match.append((row, col))
                 else:
@@ -19,8 +26,8 @@ class CandyCrushRules(RuleSystem):
                         matches.append(current_match)
                     current_color = tile.getColorId()
                     current_match = [(row, col)]
-
-            if len(current_match) >= self.min_match: #extra check while end
+                    
+            if len(current_match) >= self.min_match: 
                 matches.append(current_match)
         return matches
     
@@ -31,6 +38,13 @@ class CandyCrushRules(RuleSystem):
             current_color = None
             for row in range(self.gameGrid.height):
                 tile = self.gameGrid.getTileAt((row, col))
+                if tile.getColorId() == 0:
+                    if len(current_match) >= self.min_match:
+                        matches.append(current_match)
+                    current_match = []
+                    current_color = None
+                    continue
+                
                 if current_color is not None and tile.getColorId() == current_color:
                     current_match.append((row, col))
                 else:
