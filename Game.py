@@ -6,9 +6,11 @@ from State import State
 class Game(ABC):
     path: str
 
-    def __init__(self, playerList, parent):
+    def __init__(self, playerList, parent, mainMenuFrame, showFrame):
         self.playerList = playerList
         self.parent = parent
+        self.mainMenuFrame = mainMenuFrame
+        self.showFrame = showFrame
         self.gameState = State.INITIALIZED
         self.frame = tk.Frame(parent)
         self.frame.grid(row=0, column=0, sticky="nsew")
