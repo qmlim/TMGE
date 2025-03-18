@@ -8,7 +8,7 @@ from Tile import Tile
 
 class TetrisGrid(Grid):
     def __init__(self):
-        super().__init__(3, 3)
+        super().__init__(10, 20)
         self.gameGrid = [[Tile(0, (i, j)) for i in range(self.width)] for j in range (self.height)]
 
     def updateGrid(self, checkResults):
