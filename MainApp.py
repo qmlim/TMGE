@@ -90,13 +90,15 @@ def gameSelect():
     tk.Button(
         gameSelectFrame,
         text="Tetris",
-        command=lambda: startTetrisGame(),
+        command=startTetrisGame,
         width=12).pack(pady=(10, 5))
+
     tk.Button(
         gameSelectFrame,
         text="CandyCrush",
         command=lambda: startCandyGame(),
         width=12).pack(pady=5)
+
     tk.Button(
         gameSelectFrame,
         text="Back",
@@ -106,7 +108,9 @@ def gameSelect():
 def startTetrisGame():
     global tetrisGame
     tetrisGame = TetrisGame(players, container)
-    tetrisGame.gamePlay()
+    tetrisGame.bind_keys(root)
+    showFrame(tetrisGame.gameSetUp())
+    # tetrisGame.gamePlay()
 
 def startCandyGame():
     pass
