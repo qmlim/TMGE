@@ -179,9 +179,9 @@ class TetrisGame(Game):
                 btn = self.frame.grid_slaves(row=i, column=j)[0]
 
                 if tile.tileType == 2:
-                    btn.config(text="■", bg="darkblue")
+                    btn.config(text="", bg="darkblue")
                 elif tile.tileType == 1:
-                    btn.config(text="■", bg="blue")
+                    btn.config(text="", bg="blue")
                 else:
                     btn.config(text=" ", bg="white")
 
