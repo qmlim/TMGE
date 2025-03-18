@@ -15,7 +15,7 @@ class TetrisGame(Game):
         super().__init__(playerList, parent)
         self.gameGridType = TetrisGrid()
         self.rules = TetrisRules(self.gameGridType.gameGrid)
-
+        self.score = 0
 
         self.current_shape = None
         self.current_position = [4, 0]
@@ -46,6 +46,7 @@ class TetrisGame(Game):
         filled_rows = self.rules.checkRows()
         if filled_rows:
             self.gameGridType.updateGrid(filled_rows)
+            self.update_score(len(filled_rows))
             self.updateGridDisplay()
 
     def handleInput(self, event=None):
@@ -185,6 +186,17 @@ class TetrisGame(Game):
                 else:
                     btn.config(text=" ", bg="white")
 
+
+    def update_score(self, rows_cleared):
+        if rows_cleared == 1:
+            self.score += 10
+        elif rows_cleared == 2:
+            self.score += 40
+        elif rows_cleared == 3:
+            self.score += 90
+        elif rows_cleared == 4:
+            self.score += 160
+        print(f"Score: {self.score}")
 
 if __name__ == "__main__":
     TetrisGame([], None)
