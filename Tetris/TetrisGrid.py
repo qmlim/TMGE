@@ -11,6 +11,9 @@ class TetrisGrid(Grid):
         super().__init__(10, 20)
         self.gameGrid = [[Tile(0, (i, j)) for i in range(self.width)] for j in range (self.height)]
 
+    def initializeGrid(self):
+        self.gameGrid = [[Tile(0, (i, j)) for i in range(self.width)] for j in range (self.height)]
+
     def updateGrid(self, checkResults):
         self.clearRows(checkResults)
         self.updateTilePositions()

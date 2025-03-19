@@ -36,7 +36,7 @@ class TetrisGame(Game):
         Label(self.frame, text="Tetris", font=("Font", 20), width=12).grid(row=0, column=20)
         Label(self.frame, text=f"Current Player: {self.currentPlayer.username}", font=("Font", 15)).grid(row=2, column=20)
         Label(self.frame, text="Score:", font=("Font", 15)).grid(row=3, column=20)
-        Button(self.frame, text="Back", command=self.showFrame(self.mainMenuFrame)).grid(row=18, column=20)
+        Button(self.frame, text="Back", command=lambda: self.showFrame(self.mainMenuFrame)).grid(row=18, column=20)
 
         self.updateGridDisplay()
 
@@ -241,8 +241,24 @@ class TetrisGame(Game):
         for widget in self.frame.winfo_children():
             widget.destroy()
         
+        self.gameGridType = TetrisGrid()
+        self.rules = TetrisRules(self.gameGridType.gameGrid)
+        self.score = 0
         self.currentPlayer = self.playerList[1]
+
+        self.current_shape = None
+        self.current_position = [3, 0]
+        self.last_position = [0, 0]
+
+        self.fall_speed = 500
+        self.gameState = State.RUNNING
+
         self.gameSetUp()
+        self.bind_keys(self.parent)
+        self.frame.focus_set()
+        self.spawn_new_shape()
+
+        self.showFrame(self.frame)
 
 
     def gameOverPopUp(self):
@@ -251,7 +267,8 @@ class TetrisGame(Game):
             self.swapPlayer()
         else:
             messagebox.showinfo("GameOver!", f"{self.playerList[0].username}'s Score: scorehere\n{self.currentPlayer.username}'s Score: {self.score}\nText Wins!")
-            self.showFrame(self.mainMenuFrame)
+            self.gameState = State.GAME_OVER
+            self.parent.after(100, lambda: self.showFrame(self.mainMenuFrame))
 
 
 if __name__ == "__main__":
