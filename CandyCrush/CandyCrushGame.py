@@ -123,7 +123,7 @@ class CandyCrushGame(Game):
         tile2.getFrame().config(bg=tile2.getColor())
 
     def checkAfterSwap(self, p1, p2):
-        matches = self.ruleSystem.findMatches()
+        matches = self.ruleChecking()
         if matches:
             self.moves -= 1
             self.movesLeft.config(text=f"Moves Left: {self.moves}")
@@ -149,7 +149,7 @@ class CandyCrushGame(Game):
         self.is_animating = False
 
     def checkForMatches(self):
-        matches = self.ruleSystem.findMatches()
+        matches = self.ruleChecking()
         if matches:
             self.clearMatches(matches)
         else:
@@ -244,7 +244,7 @@ class CandyCrushGame(Game):
         self.frame.after(300, self.checkAfterFilling)
     
     def checkAfterFilling(self):
-        matches = self.ruleSystem.findMatches()
+        matches = self.ruleChecking()
         if matches:
             self.clearMatches(matches)
         else:
@@ -281,10 +281,10 @@ class CandyCrushGame(Game):
 
 
     def gamePlay(self):
-        pass
+        return self.gameSetUp()
 
     def ruleChecking(self):
-        pass
+        return self.ruleSystem.findMatches()
 
     def handleInput(self):
-        pass
+        pass #No need for real time input handling, player could select a tile and leave for 10 years and come back to select the next.

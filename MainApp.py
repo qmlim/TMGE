@@ -107,7 +107,7 @@ def startCandyCrushGame():
     pickTwoPlayers()
     if (len(currentplayers) == 2):
         candyCrushGame = CandyCrushGame(currentplayers, container, mainMenuFrame, showFrame)
-        candyCrushFrame = candyCrushGame.gameSetUp()
+        candyCrushFrame = candyCrushGame.gamePlay()
         frames.append(candyCrushFrame)
         showFrame(candyCrushFrame)
 
