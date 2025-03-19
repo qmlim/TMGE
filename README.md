@@ -9,13 +9,15 @@ TMGE is a tile-matching game environment that supports a grid layout and game el
 Read our our project's process [here](https://docs.google.com/document/d/1-oJ4RgMX8z0jw14EhpQqoWvnfUJS_luKYH-I-kcwJPM/edit?usp=sharing)
 
 ## Getting Started
+Follow these steps to set up and run TMGE:
 1. Clone the repository:
 >Git Clone https://github.com/qmlim/TMGE.git
 2. Open Command Line or terminal
-3. cd TMGE
+3. Navigate to the project directory:
+>cd TMGE
 4. Run the game
 >Python3 MainApp.py 
-**or** 
+ **or** 
 >Python MainApp.py
 
 ### Instructions
