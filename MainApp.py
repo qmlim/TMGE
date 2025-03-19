@@ -186,22 +186,28 @@ def pickTwoPlayers():
     selectWindow.title("Player Select")
     label = tk.Label(selectWindow, text="Please Select Two Players")
     label.pack(pady=10)
+    playerBtns = []
 
     #Centers New Window Somewhat Over Main Window
     selectWindow.geometry(f"+{root.winfo_x() + (root.winfo_width())//4}+{root.winfo_y() +(root.winfo_height())//4}")
 
-    def addPlayer(player):
+    def addPlayer(player, playerInd):
+        print(playerInd)
         if len(currentplayers) < 2:
             currentplayers.append(player)
         if len(currentplayers) == 2:
             selectWindow.destroy()
+        playerBtns[playerInd].config(state="disabled")
 
-    for player in players:
-        tk.Button(
+    for playerInd in range(len(players)):
+        player = players[playerInd]
+        playerBtn = tk.Button(
             selectWindow,
             text=player.getUsername(),
-            command=lambda p=player: addPlayer(p),
-            width=12).pack(pady=5)
+            command=lambda p=player, ind = playerInd: addPlayer(p, ind),
+            width=12)
+        playerBtn.pack(pady=5)
+        playerBtns.append(playerBtn)
 
     #Opens Over Main Window
     selectWindow.transient(container)
