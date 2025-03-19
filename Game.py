@@ -6,11 +6,11 @@ from State import State
 class Game(ABC):
     path: str
 
-    def __init__(self, playerList, parent, mainMenuFrame, showFrame):
+    def __init__(self, playerList, parent, mainMenuFrame=None, showFrameFunc=None):
         self.playerList = playerList
         self.parent = parent
         self.mainMenuFrame = mainMenuFrame
-        self.showFrame = showFrame
+        self.showFrameFunc = showFrameFunc
         self.gameState = State.INITIALIZED
         self.frame = tk.Frame(parent)
         self.frame.grid(row=0, column=0, sticky="nsew")
@@ -21,8 +21,9 @@ class Game(ABC):
     #     pass
         
     def gameSetUp(self):
-        self.generateGridFrame()
+        # self.generateGridFrame()
         self.handleInput()
+        self.backButton()
         return self.frame
     
     def generateGridFrame(self):
@@ -30,6 +31,13 @@ class Game(ABC):
             for j in range(self.gameGridType.width):
                 tk.Button(self.frame, text=" ", width=2).grid(row=i, column=j)
         return self.frame
+
+    def backButton(self):
+        backButton = tk.Button(self.frame, text="Back", command=self.backToMenu)
+        backButton.grid(row=self.gameGridType.height + 1, column=0, columnspan=self.gameGridType.width, pady=10)
+
+    def backToMenu(self):
+        self.showFrameFunc(self.mainMenuFrame)
 
     @abstractmethod
     def gamePlay(self):
