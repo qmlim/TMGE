@@ -1,7 +1,7 @@
-from TMGE.Game import Game 
-from TMGE.State import State
-from TMGE.CandyCrush.CandyCrushGrid import CandyCrushGrid
-from TMGE.CandyCrush.CandyCrushRules import CandyCrushRules
+from Game import Game 
+from State import State
+from CandyCrush.CandyCrushGrid import CandyCrushGrid
+from CandyCrush.CandyCrushRules import CandyCrushRules
 import tkinter as tk
 import random
 

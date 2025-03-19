@@ -1,4 +1,4 @@
-from TMGE.RuleSystem import RuleSystem
+from RuleSystem import RuleSystem
 
 class CandyCrushRules(RuleSystem):
     def __init__(self, gameGrid):

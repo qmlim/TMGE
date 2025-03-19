@@ -1,5 +1,5 @@
-from TMGE.Grid import Grid
-from TMGE.CandyCrush.CandyCrushTile import CandyCrushTile
+from Grid import Grid
+from CandyCrush.CandyCrushTile import CandyCrushTile
 import random
 class CandyCrushGrid(Grid):
     def __init__(self):
