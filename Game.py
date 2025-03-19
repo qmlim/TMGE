@@ -11,17 +11,21 @@ class Game(ABC):
         self.parent = parent
         self.mainMenuFrame = mainMenuFrame
         self.showFrameFunc = showFrameFunc
-        self.gameState = State.RUNNING
+        self.gameState = State.INITIALIZED
         self.frame = tk.Frame(parent)
         self.frame.grid(row=0, column=0, sticky="nsew")
         self.gameGridType = None
 
+    # @abstractmethod
+    # def gameSetUp(self):
+    #     pass
+        
     def gameSetUp(self):
         # self.generateGridFrame()
         self.handleInput()
         self.backButton()
         return self.frame
-
+    
     def generateGridFrame(self):
         for i in range(self.gameGridType.height):
             for j in range(self.gameGridType.width):

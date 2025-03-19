@@ -5,6 +5,5 @@ class Tile(ABC):
         self.tileType = tileType
         self.position = position
 
-    @abstractmethod
-    def updatePosition(self):
-        pass
+    def updatePosition(self, newPosition):
+        self.position = newPosition

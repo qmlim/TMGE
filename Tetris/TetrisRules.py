@@ -4,7 +4,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from RuleSystem import RuleSystem
 
-
 class TetrisRules(RuleSystem):
     def __init__(self, gameGrid):
         self.gameGrid = gameGrid
@@ -12,9 +11,10 @@ class TetrisRules(RuleSystem):
     def checkColumns(self):
         return
 
+
     def checkRows(self):
         filledRows = []
         for index, row in enumerate(self.gameGrid):
-            if "" not in row:
+            if all(tile.tileType != 0 for tile in row):
                 filledRows.append(index)
         return filledRows
