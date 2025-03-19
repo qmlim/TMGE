@@ -33,3 +33,6 @@ class Player:
 
     def getUsername(self):
         return self.username
+    
+    def addWin(self):
+        self.wins += 1

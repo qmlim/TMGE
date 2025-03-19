@@ -1,9 +1,8 @@
 import tkinter as tk
 import tkinter.messagebox as messagebox
-import Player
+from Player import Player
 from Tetris.TetrisGame import TetrisGame
 from CandyCrush.CandyCrushGame import CandyCrushGame
-
 
 root = tk.Tk()
 root.title("TGME")
@@ -24,6 +23,7 @@ for frame in frames:
     frame.grid(row=0, column=0, sticky="nsew")
 
 players = []
+currentplayers = []
 
 
 def main():
@@ -90,19 +90,34 @@ def gameSelect():
     tk.Button(
         gameSelectFrame,
         text="Tetris",
-        command=lambda: showFrame(TetrisGame(players, container).gameSetUp()),
+        command=lambda: startTetrisGame(),
         width=12).pack(pady=(10, 5))
     tk.Button(
         gameSelectFrame,
         text="CandyCrush",
-        command=lambda: showFrame(CandyCrushGame(players, container).gameSetUp()),
+        command=lambda: startCandyCrushGame(),
         width=12).pack(pady=5)
     tk.Button(
         gameSelectFrame,
         text="Back",
         command=lambda: showFrame(mainMenuFrame),
         width=12).pack(pady=30)
-    
+
+def startCandyCrushGame():
+    pickTwoPlayers()
+    if (len(currentplayers) == 2):
+        candyCrushGame = CandyCrushGame(currentplayers, container, mainMenuFrame, showFrame)
+        candyCrushFrame = candyCrushGame.gamePlay()
+        frames.append(candyCrushFrame)
+        showFrame(candyCrushFrame)
+
+def startTetrisGame():
+    pickTwoPlayers()
+    if (len(currentplayers) == 2):
+        tetrisGame = TetrisGame(currentplayers, container, mainMenuFrame, showFrame)
+        tetrisFrame = tetrisGame.gameSetUp()
+        frames.append(tetrisFrame)
+        showFrame(tetrisFrame)
 
 def playerSelect():
     for widget in playerSelectFrame.winfo_children():
@@ -145,7 +160,7 @@ def createPlayerAccount(usernameEntry):
         return
     
     else: 
-        newPlayer = Player.Player(username, 0)
+        newPlayer = Player(username, 0)
         players.append(newPlayer)
         messagebox.showinfo("SUCCESS", f"{username} account created")
         usernameEntry.delete(0, tk.END)
@@ -165,6 +180,41 @@ def showFrame(frame):
     else:
         messagebox.showerror("ERROR", "Received None instead of a frame.")
 
+def pickTwoPlayers():
+    currentplayers.clear()
+    selectWindow = tk.Toplevel(container)
+    selectWindow.title("Player Select")
+    label = tk.Label(selectWindow, text="Please Select Two Players")
+    label.pack(pady=10)
+    playerBtns = []
+
+    #Centers New Window Somewhat Over Main Window
+    selectWindow.geometry(f"+{root.winfo_x() + (root.winfo_width())//4}+{root.winfo_y() +(root.winfo_height())//4}")
+
+    def addPlayer(player, playerInd):
+        print(playerInd)
+        if len(currentplayers) < 2:
+            currentplayers.append(player)
+        if len(currentplayers) == 2:
+            selectWindow.destroy()
+        playerBtns[playerInd].config(state="disabled")
+
+    for playerInd in range(len(players)):
+        player = players[playerInd]
+        playerBtn = tk.Button(
+            selectWindow,
+            text=player.getUsername(),
+            command=lambda p=player, ind = playerInd: addPlayer(p, ind),
+            width=12)
+        playerBtn.pack(pady=5)
+        playerBtns.append(playerBtn)
+
+    #Opens Over Main Window
+    selectWindow.transient(container)
+    #Stops Main Window Buttons
+    selectWindow.grab_set()
+    #Stops Main Window From Moving On Until Closed
+    container.wait_window(selectWindow)
 
 
 if __name__ == "__main__":
