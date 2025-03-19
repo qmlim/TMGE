@@ -55,3 +55,6 @@ class CandyCrushGrid(Grid):
 
     def clearColumns(self, matches):
         pass
+
+    def updateTilePositions(self):
+        pass

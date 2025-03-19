@@ -13,8 +13,8 @@ from State import State
 from Tetris.TetrisScore import TetrisScore
 
 class TetrisGame(Game):
-    def __init__(self, playerList, parent, mainMenuFrame, showFrame):
-        super().__init__(playerList, parent, mainMenuFrame, showFrame)
+    def __init__(self, playerList, parent, mainMenuFrame, showFrameFunc):
+        super().__init__(playerList, parent, mainMenuFrame, showFrameFunc)
         self.gameGridType = TetrisGrid()
         self.rules = TetrisRules(self.gameGridType.gameGrid)
         self.scores = {player.username: 0 for player in playerList}
@@ -32,6 +32,7 @@ class TetrisGame(Game):
 
     def gameSetUp(self):
         super().gameSetUp()
+        self.generateGridFrame()
         self.bind_keys(self.parent)
 
         self.score_label = Label(self.frame, text=f"Score: {self.scores[self.currentPlayer.username]}", font=("Font", 15))
@@ -40,7 +41,6 @@ class TetrisGame(Game):
         Label(self.frame, text="Tetris", font=("Font", 20), width=12).grid(row=0, column=20)
         Label(self.frame, text=f"Current Player: {self.currentPlayer.username}", font=("Font", 15)).grid(row=2, column=20)
         Label(self.frame, text="Score:", font=("Font", 15)).grid(row=3, column=20)
-        Button(self.frame, text="Back", command=lambda: self.showFrame(self.mainMenuFrame)).grid(row=18, column=20)
 
         self.updateGridDisplay()
 
@@ -206,7 +206,7 @@ class TetrisGame(Game):
         self.frame.focus_set()
         self.spawn_new_shape()
 
-        self.showFrame(self.frame)
+        self.showFrameFunc(self.frame)
 
     def gameOverPopUp(self):
         if self.currentPlayer != self.playerList[1]:
@@ -215,7 +215,7 @@ class TetrisGame(Game):
         else:
             messagebox.showinfo("GameOver!", f"{self.playerList[0].username}'s Score: {self.scores[self.playerList[0].username]}\n{self.currentPlayer.username}'s Score: {self.scores[self.currentPlayer.username]}\n{self.playerList[0].username} Wins!")
             self.gameState = State.GAME_OVER
-            self.parent.after(100, lambda: self.showFrame(self.mainMenuFrame))
+            self.parent.after(100, lambda: self.showFrameFunc(self.mainMenuFrame))
 
 if __name__ == "__main__":
     TetrisGame([], None)

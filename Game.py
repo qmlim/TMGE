@@ -16,12 +16,9 @@ class Game(ABC):
         self.frame.grid(row=0, column=0, sticky="nsew")
         self.gameGridType = None
 
-    # @abstractmethod
-    # def gameSetUp(self):
-    #     pass
         
     def gameSetUp(self):
-        # self.generateGridFrame()
+        self.generateGridFrame()
         self.handleInput()
         self.backButton()
         return self.frame
