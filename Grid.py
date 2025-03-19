@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class Grid(ABC):
     def __init__(self, width, height):
-        self. width = width
+        self.width = width
         self.height = height
 
     @abstractmethod

@@ -11,6 +11,7 @@ class TetrisRules(RuleSystem):
     def checkColumns(self):
         return
 
+
     def checkRows(self):
         filledRows = []
         for index, row in enumerate(self.gameGrid):

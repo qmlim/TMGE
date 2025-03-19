@@ -1,5 +1,6 @@
 import sys
 import os
+from tkinter import messagebox
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from Player import Player
@@ -19,10 +20,11 @@ class TetrisGame(Game):
         self.currentPlayer = self.playerList[0]
 
         self.current_shape = None
-        self.current_position = [4, 0]
+        self.current_position = [3, 0]
+        self.last_position = [0, 0]
 
-        self.running = True
         self.fall_speed = 500
+        self.gameState = State.RUNNING
         self.spawn_new_shape()
 
 
@@ -34,7 +36,7 @@ class TetrisGame(Game):
         Label(self.frame, text="Tetris", font=("Font", 20), width=12).grid(row=0, column=20)
         Label(self.frame, text=f"Current Player: {self.currentPlayer.username}", font=("Font", 15)).grid(row=2, column=20)
         Label(self.frame, text="Score:", font=("Font", 15)).grid(row=3, column=20)
-        Button(self.frame, text="Back").grid(row=18, column=20)
+        Button(self.frame, text="Back", command=self.showFrame(self.mainMenuFrame)).grid(row=18, column=20)
 
         self.updateGridDisplay()
 
@@ -50,13 +52,28 @@ class TetrisGame(Game):
 
 
     def ruleChecking(self):
-        """Check if any rows are fully filled, then clear them."""
+        """Check if any rows are fully filled, then clear them.
+        Also checks if Game is Over"""
         self.rules.gameGrid = self.gameGridType.gameGrid
-        filled_rows = self.rules.checkRows()
-        if filled_rows:
-            self.gameGridType.updateGrid(filled_rows)
-            self.update_score(len(filled_rows))
-            self.updateGridDisplay()
+        filledRows = self.rules.checkRows()
+
+        if self.checkIfShapeAtTop():
+            self.gameOverPopUp()
+
+        if filledRows:
+            if len(filledRows) == 18:
+                self.gameOverPopUp()
+            else:
+                self.gameGridType.updateGrid(filledRows)
+                self.update_score(len(filledRows))
+                self.updateGridDisplay()
+
+        
+    def checkIfShapeAtTop(self):
+        """Compares last position to current position.
+        If position remains the same in the next turn, return True"""
+        if 1 >= self.current_position[1] >= 0:
+            return self.last_position[1] == self.current_position[1]
 
 
     def handleInput(self, event=None):
@@ -96,7 +113,7 @@ class TetrisGame(Game):
         Tries to move shape down by 1. If it fails, the piece is “locked”
         and a new piece spawns.
         """
-        if not self.running:
+        if self.gameState != State.RUNNING:
             return
 
         if self.can_move(self.current_position[0], self.current_position[1] + 1):
@@ -116,6 +133,7 @@ class TetrisGame(Game):
         new_y = self.current_position[1] + dy
 
         if self.can_move(new_x, new_y):
+            self.last_position = [self.current_position[0], self.current_position[1]]
             self.clear_active_shape()
             self.current_position = [new_x, new_y]
             self.place_shape_on_grid()
@@ -218,12 +236,22 @@ class TetrisGame(Game):
             self.score += 160
         print(f"Score: {self.score}")
 
+
     def swapPlayer(self):
         for widget in self.frame.winfo_children():
             widget.destroy()
         
         self.currentPlayer = self.playerList[1]
         self.gameSetUp()
+
+
+    def gameOverPopUp(self):
+        if self.currentPlayer != self.playerList[1]:
+            messagebox.showinfo("GameOver!", f"{self.currentPlayer.username}'s Score: {self.score}\nNext game is {self.playerList[1].username}'s turn!")
+            self.swapPlayer()
+        else:
+            messagebox.showinfo("GameOver!", f"{self.playerList[0].username}'s Score: scorehere\n{self.currentPlayer.username}'s Score: {self.score}\nText Wins!")
+            self.showFrame(self.mainMenuFrame)
 
 
 if __name__ == "__main__":
