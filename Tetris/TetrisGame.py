@@ -1,44 +1,53 @@
 import sys
 import os
-import tkinter as tk
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from Player import Player
 from Tetris.TetrisRules import TetrisRules
 from Game import Game
 from Tetris.TetrisGrid import TetrisGrid
 from Tetris.shape import TetrisShapeFactory
+from tkinter import * 
 from State import State
 
 class TetrisGame(Game):
-    def __init__(self, playerList, parent):
-        super().__init__(playerList, parent)
+    def __init__(self, playerList, parent, mainMenuFrame, showFrame):
+        super().__init__(playerList, parent, mainMenuFrame, showFrame)
         self.gameGridType = TetrisGrid()
         self.rules = TetrisRules(self.gameGridType.gameGrid)
         self.score = 0
+        self.currentPlayer = self.playerList[0]
 
         self.current_shape = None
         self.current_position = [4, 0]
 
         self.running = True
         self.fall_speed = 500
-
         self.spawn_new_shape()
+
 
     def gameSetUp(self):
         """Sets up the game’s UI (buttons, etc.)."""
         super().gameSetUp()
         self.bind_keys(self.parent)
+
+        Label(self.frame, text="Tetris", font=("Font", 20), width=12).grid(row=0, column=20)
+        Label(self.frame, text=f"Current Player: {self.currentPlayer.username}", font=("Font", 15)).grid(row=2, column=20)
+        Label(self.frame, text="Score:", font=("Font", 15)).grid(row=3, column=20)
+        Button(self.frame, text="Back").grid(row=18, column=20)
+
         self.updateGridDisplay()
 
         self.parent.after(self.fall_speed, self.auto_fall)
         return self.frame
+
 
     def gamePlay(self):
         """Main game loop called from the framework (if applicable)."""
         self.handleInput()
         self.ruleChecking()
         self.updateGridDisplay()
+
 
     def ruleChecking(self):
         """Check if any rows are fully filled, then clear them."""
@@ -48,6 +57,7 @@ class TetrisGame(Game):
             self.gameGridType.updateGrid(filled_rows)
             self.update_score(len(filled_rows))
             self.updateGridDisplay()
+
 
     def handleInput(self, event=None):
         """Handles keyboard input. Using WASD for movement/rotation."""
@@ -64,6 +74,7 @@ class TetrisGame(Game):
 
         self.updateGridDisplay()
 
+
     def bind_keys(self, root):
         """
         Binds keyboard controls to the window.
@@ -71,11 +82,13 @@ class TetrisGame(Game):
         """
         root.bind("<KeyPress>", self.handleInput)
 
+
     def spawn_new_shape(self):
         """Spawns a brand-new random Tetris shape at the top."""
         self.current_shape = TetrisShapeFactory.create_random_shape()
         self.current_position = [4, 0]
         self.place_shape_on_grid()
+
 
     def auto_fall(self):
         """
@@ -96,6 +109,7 @@ class TetrisGame(Game):
         self.updateGridDisplay()
         self.parent.after(self.fall_speed, self.auto_fall)
 
+
     def move_shape(self, dx, dy):
         """Moves the current shape (tileType=1) by (dx, dy) if valid."""
         new_x = self.current_position[0] + dx
@@ -105,6 +119,7 @@ class TetrisGame(Game):
             self.clear_active_shape()
             self.current_position = [new_x, new_y]
             self.place_shape_on_grid()
+
 
     def rotate_shape(self):
         """Rotate the shape 90 degrees clockwise if it fits."""
@@ -116,6 +131,7 @@ class TetrisGame(Game):
         else:
             self.clear_active_shape()
             self.place_shape_on_grid()
+
 
     def can_move(self, x, y):
         """
@@ -137,6 +153,7 @@ class TetrisGame(Game):
                         return False
         return True
 
+
     def lock_shape(self):
         """
         Convert the current shape’s tileType=1 squares to tileType=2,
@@ -150,12 +167,14 @@ class TetrisGame(Game):
                     if 0 <= grid_x < self.gameGridType.width and 0 <= grid_y < self.gameGridType.height:
                         self.gameGridType.gameGrid[grid_y][grid_x].tileType = 2
 
+
     def clear_active_shape(self):
         """Erase any tileType=1 squares (the “active” piece) from the board."""
         for row in self.gameGridType.gameGrid:
             for tile in row:
                 if tile.tileType == 1:
                     tile.tileType = 0
+
 
     def place_shape_on_grid(self):
         """Draw the current shape in the grid with tileType=1."""
@@ -166,6 +185,7 @@ class TetrisGame(Game):
                     grid_y = self.current_position[1] + row_idx
                     if 0 <= grid_x < self.gameGridType.width and 0 <= grid_y < self.gameGridType.height:
                         self.gameGridType.gameGrid[grid_y][grid_x].tileType = 1
+
 
     def updateGridDisplay(self):
         """
@@ -197,6 +217,14 @@ class TetrisGame(Game):
         elif rows_cleared == 4:
             self.score += 160
         print(f"Score: {self.score}")
+
+    def swapPlayer(self):
+        for widget in self.frame.winfo_children():
+            widget.destroy()
+        
+        self.currentPlayer = self.playerList[1]
+        self.gameSetUp()
+
 
 if __name__ == "__main__":
     TetrisGame([], None)
