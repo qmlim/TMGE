@@ -155,24 +155,7 @@ class CandyCrushGame(Game):
         self.frame.after(300, self.dropTiles)
     
     def fillEmptySpaces(self):
-        empty_positions = []
-        # find all empty positions
-        for row in range(self.gameGridType.height):
-            for col in range(self.gameGridType.width):
-                if self.gameGridType.getTileAt((row, col)).getColorId() == 0:
-                    empty_positions.append((row, col))
-        
-        if not empty_positions:
-            self.is_animating = False
-            return
-        
-        for position in empty_positions:
-            row, col = position
-            color_id = random.choice(range(1, 7))
-            tile = self.gameGridType.getTileAt(position)
-            tile.color_id = color_id
-            tile.color = tile.COLOR_MAP.get(color_id, "#FFFFFF")
-            tile.getFrame().config(bg=tile.getColor())
+        self.gameGridType.updateGrid()
         # check if there are new matches
         self.frame.after(300, self.checkAfterFilling)
     

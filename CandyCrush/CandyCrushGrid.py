@@ -86,8 +86,25 @@ class CandyCrushGrid(Grid):
         t2.getFrame().config(bg=t2.getColor())
         t1.getFrame().config(bg=t1.getColor())
     
-    def updateGrid(self): 
-        return
+    def updateGrid(self): #Fills Empty Spaces
+        empty_positions = []
+        # find all empty positions
+        for row in range(self.height):
+            for col in range(self.width):
+                if self.getTileAt((row, col)).getColorId() == 0:
+                    empty_positions.append((row, col))
+        
+        if not empty_positions:
+            self.is_animating = False
+            return
+        
+        for position in empty_positions:
+            row, col = position
+            color_id = random.choice(range(1, 7))
+            tile = self.getTileAt(position)
+            tile.color_id = color_id
+            tile.color = tile.COLOR_MAP.get(color_id, "#FFFFFF")
+            tile.getFrame().config(bg=tile.getColor())
     
     def isEmpty(self): #Not Necessary
         return
