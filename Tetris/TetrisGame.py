@@ -230,6 +230,8 @@ class TetrisGame(Game):
                 TetrisScore.updatePlayerWins(winner)
                 messagebox.showinfo("GameOver!", f"{self.playerList[0].username}'s Score: {self.scores[self.playerList[0].username]}\n{self.currentPlayer.username}'s Score: {self.scores[self.currentPlayer.username]}\n{winner.username} Wins!")
             else:
+                TetrisScore.updatePlayerWins(self.playerList[0])
+                TetrisScore.updatePlayerWins(self.playerList[1])
                 messagebox.showinfo("GameOver!", f"{self.playerList[0].username}'s Score: {self.scores[self.playerList[0].username]}\n{self.currentPlayer.username}'s Score: {self.scores[self.currentPlayer.username]}\nTie!")
             self.gameState = State.GAME_OVER
             self.parent.after(100, lambda: self.showFrameFunc(self.mainMenuFrame))
