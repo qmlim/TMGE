@@ -199,7 +199,6 @@ def pickTwoPlayers():
     selectWindow.geometry(f"+{root.winfo_x() + (root.winfo_width())//4}+{root.winfo_y() +(root.winfo_height())//4}")
 
     def addPlayer(player, playerInd):
-        print(playerInd)
         if len(currentplayers) < 2:
             currentplayers.append(player)
         if len(currentplayers) == 2:
@@ -222,38 +221,6 @@ def pickTwoPlayers():
     selectWindow.grab_set()
     #Stops Main Window From Moving On Until Closed
     container.wait_window(selectWindow)
-
-def pickTwoPlayers():
-    currentplayers.clear()
-    selectWindow = tk.Toplevel(container)
-    selectWindow.title("Player Select")
-    label = tk.Label(selectWindow, text="Please Select Two Players")
-    label.pack(pady=10)
-
-    #Centers New Window Somewhat Over Main Window
-    selectWindow.geometry(f"+{root.winfo_x() + (root.winfo_width())//4}+{root.winfo_y() +(root.winfo_height())//4}")
-
-    def addPlayer(player):
-        if len(currentplayers) < 2:
-            currentplayers.append(player)
-        if len(currentplayers) == 2:
-            selectWindow.destroy()
-
-    for player in players:
-        tk.Button(
-            selectWindow,
-            text=player.getUsername(),
-            command=lambda p=player: addPlayer(p),
-            width=12).pack(pady=5)
-
-    #Opens Over Main Window
-    selectWindow.transient(container)
-    #Stops Main Window Buttons
-    selectWindow.grab_set()
-    #Stops Main Window From Moving On Until Closed
-    container.wait_window(selectWindow)
-
-
 
 if __name__ == "__main__":
     main()

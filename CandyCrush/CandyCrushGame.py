@@ -181,45 +181,12 @@ class CandyCrushGame(Game):
         self.frame.after(300, self.dropTiles)
     
     def dropTiles(self):
-        columns_affected = set()
-        # columns that need drop tiles
-        for row in range(self.gameGridType.height):
-            for col in range(self.gameGridType.width):
-                if self.gameGridType.getTileAt((row, col)).getColorId() == 0:
-                    columns_affected.add(col)
-        
-        has_dropped = False
-        for col in columns_affected:
-            # bottom to top
-            for row in range(self.gameGridType.height - 1, -1, -1):
-                current_tile = self.gameGridType.getTileAt((row, col))
-                if current_tile.getColorId() == 0:
-                    row_above = row - 1
-                    while row_above >= 0:
-                        tile_above = self.gameGridType.getTileAt((row_above, col))
-                        if tile_above.getColorId() != 0:
-                            # found a non-empty tile, drop it to the current position
-                            self.moveTile((row_above, col), (row, col))
-                            has_dropped = True
-                            break
-                        row_above -= 1
-        
-        if has_dropped:
+        dropped = self.gameGridType.updateTilePositions()
+        if dropped:
             self.frame.after(300, self.fillEmptySpaces)
         else:
             self.fillEmptySpaces()
-    
-    def moveTile(self, p1, p2): # from p1 to p2
-        t1 = self.gameGridType.getTileAt(p1)
-        t2 = self.gameGridType.getTileAt(p2)
-        
-        t2.color_id = t1.getColorId()
-        t2.color = t1.getColor()
-        t1.color_id = 0
-        t1.color = "#FFFFFF"
-        
-        t2.getFrame().config(bg=t2.getColor())
-        t1.getFrame().config(bg=t1.getColor())
+
     
     def fillEmptySpaces(self):
         empty_positions = []

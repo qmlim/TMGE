@@ -41,20 +41,51 @@ class CandyCrushGrid(Grid):
         row, col = position
         return self.grid[row][col]
     
-    def updateGrid(self, matches):
-        pass
+    def moveTile(self, p1, p2): # from p1 to p2
+        t1 = self.getTileAt(p1)
+        t2 = self.getTileAt(p2)
+        
+        t2.color_id = t1.getColorId()
+        t2.color = t1.getColor()
+        t1.color_id = 0
+        t1.color = "#FFFFFF"
+        
+        t2.getFrame().config(bg=t2.getColor())
+        t1.getFrame().config(bg=t1.getColor())
     
-    def isEmpty(self):
-        pass
+    def updateGrid(self): 
+        return
     
-    def clearMatches(self, match_positions):
-        pass
+    def isEmpty(self): #Not Necessary
+        return
 
-    def clearRows(self, matches):
-        pass
+    def clearRows(self): #Not Necessary
+        return
 
-    def clearColumns(self, matches):
-        pass
+    def clearColumns(self): #Not Necessary
+        return
 
     def updateTilePositions(self):
-        pass
+        columns_affected = set()
+        # columns that need drop tiles
+        for row in range(self.height):
+            for col in range(self.width):
+                if self.getTileAt((row, col)).getColorId() == 0:
+                    columns_affected.add(col)
+        
+        has_dropped = False
+        for col in columns_affected:
+            # bottom to top
+            for row in range(self.height - 1, -1, -1):
+                current_tile = self.getTileAt((row, col))
+                if current_tile.getColorId() == 0:
+                    row_above = row - 1
+                    while row_above >= 0:
+                        tile_above = self.getTileAt((row_above, col))
+                        if tile_above.getColorId() != 0:
+                            # found a non-empty tile, drop it to the current position
+                            self.moveTile((row_above, col), (row, col))
+                            has_dropped = True
+                            break
+                        row_above -= 1
+        return has_dropped
