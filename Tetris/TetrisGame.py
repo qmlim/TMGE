@@ -1,6 +1,8 @@
+# --- TetrisGame.py ---
 import sys
 import os
 from tkinter import messagebox
+from tkinter import * 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from Player import Player
@@ -8,9 +10,9 @@ from Tetris.TetrisRules import TetrisRules
 from Game import Game
 from Tetris.TetrisGrid import TetrisGrid
 from Tetris.shape import TetrisShapeFactory
-from tkinter import * 
 from State import State
 from Tetris.TetrisScore import TetrisScore
+from Tetris.TetrisGameDisplay import TetrisGameDisplay
 
 class TetrisGame(Game):
     def __init__(self, playerList, parent, mainMenuFrame, showFrameFunc):
@@ -27,30 +29,29 @@ class TetrisGame(Game):
         self.fall_speed = 500
         self.gameState = State.RUNNING
         self.score_system = TetrisScore(self.scores.get(self.currentPlayer.username, 0), self.scores, self.currentPlayer)
-        
+
+        self.display = None
+        self.score_label = None
+
         self.spawn_new_shape()
 
     def gameSetUp(self):
-        super().gameSetUp()
         self.generateGridFrame()
+        self.display = TetrisGameDisplay(self.frame, self.gameGridType)
+        super().gameSetUp()
         self.bind_keys(self.parent)
 
-        self.score_label = Label(self.frame, text=f"Score: {self.scores[self.currentPlayer.username]}", font=("Font", 15))
-        self.score_label.grid(row=4, column=20)
+        self.score_label = self.display.create_labels(self.scores[self.currentPlayer.username], self.currentPlayer.username)
 
-        Label(self.frame, text="Tetris", font=("Font", 20), width=12).grid(row=0, column=20)
-        Label(self.frame, text=f"Current Player: {self.currentPlayer.username}", font=("Font", 15)).grid(row=2, column=20)
-        Label(self.frame, text="Score:", font=("Font", 15)).grid(row=3, column=20)
-
-        self.updateGridDisplay()
-
+        self.display.update_grid_display()
         self.parent.after(self.fall_speed, self.auto_fall)
         return self.frame
 
     def gamePlay(self):
         self.handleInput()
         self.ruleChecking()
-        self.updateGridDisplay()
+        if self.display:
+            self.display.update_grid_display()
 
     def ruleChecking(self):
         self.rules.gameGrid = self.gameGridType.gameGrid
@@ -63,14 +64,15 @@ class TetrisGame(Game):
             if len(filledRows) == 18:
                 self.gameOverPopUp()
             else:
-                self.gameGridType.updateGrid(filledRows)
-                self.score_system.calculateGameScore(len(filledRows))
-                self.score_system.updatePlayerScore()
+                self.handle_filled_rows(filledRows)
 
-                self.score_label.config(text=f"Score: {self.scores[self.currentPlayer.username]}")
-
-                self.updateGridDisplay()
-
+    def handle_filled_rows(self, filledRows):
+        self.gameGridType.updateGrid(filledRows)
+        self.score_system.calculateGameScore(len(filledRows))
+        self.score_system.updatePlayerScore()
+        self.score_label.config(text=f"Score: {self.scores[self.currentPlayer.username]}")
+        if self.display:
+            self.display.update_grid_display()
 
     def checkIfShapeAtTop(self):
         if 1 >= self.current_position[1] >= 0:
@@ -87,8 +89,8 @@ class TetrisGame(Game):
                 self.move_shape(0, 1)
             elif key == 'w':
                 self.rotate_shape()
-
-        self.updateGridDisplay()
+        if self.display:
+            self.display.update_grid_display()
 
     def bind_keys(self, root):
         root.bind("<KeyPress>", self.handleInput)
@@ -109,7 +111,8 @@ class TetrisGame(Game):
             self.ruleChecking()
             self.spawn_new_shape()
 
-        self.updateGridDisplay()
+        if self.display:
+            self.display.update_grid_display()
         self.parent.after(self.fall_speed, self.auto_fall)
 
     def move_shape(self, dx, dy):
@@ -138,12 +141,10 @@ class TetrisGame(Game):
                 if cell:
                     grid_x = x + col_idx
                     grid_y = y + row_idx
-
                     if grid_x < 0 or grid_x >= self.gameGridType.width:
                         return False
                     if grid_y < 0 or grid_y >= self.gameGridType.height:
                         return False
-
                     if self.gameGridType.gameGrid[grid_y][grid_x].tileType == 2:
                         return False
         return True
@@ -172,23 +173,10 @@ class TetrisGame(Game):
                     if 0 <= grid_x < self.gameGridType.width and 0 <= grid_y < self.gameGridType.height:
                         self.gameGridType.gameGrid[grid_y][grid_x].tileType = 1
 
-    def updateGridDisplay(self):
-        for i in range(self.gameGridType.height):
-            for j in range(self.gameGridType.width):
-                tile = self.gameGridType.gameGrid[i][j]
-                btn = self.frame.grid_slaves(row=i, column=j)[0]
-
-                if tile.tileType == 2:
-                    btn.config(text="⬛", bg="darkblue")
-                elif tile.tileType == 1:
-                    btn.config(text="🟦", bg="blue")
-                else:
-                    btn.config(text=" ", bg="white")
-
     def swapPlayer(self):
         for widget in self.frame.winfo_children():
             widget.destroy()
-        
+
         self.gameGridType = TetrisGrid()
         self.rules = TetrisRules(self.gameGridType.gameGrid)
         self.score_system = TetrisScore(0, self.scores, self.playerList[1])
@@ -197,7 +185,6 @@ class TetrisGame(Game):
         self.current_shape = None
         self.current_position = [3, 0]
         self.last_position = [0, 0]
-
         self.fall_speed = 500
         self.gameState = State.RUNNING
 
@@ -205,7 +192,6 @@ class TetrisGame(Game):
         self.bind_keys(self.parent)
         self.frame.focus_set()
         self.spawn_new_shape()
-
         self.showFrameFunc(self.frame)
 
     def gameOverPopUp(self):
