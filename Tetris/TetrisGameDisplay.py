@@ -1,4 +1,3 @@
-# --- TetrisGameDisplay.py ---
 from tkinter import Label
 
 class TetrisGameDisplay:
