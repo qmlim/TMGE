@@ -91,7 +91,7 @@ class CandyCrushGame(Game):
                     self.selected_position = None
                     self.is_animating = True
                     
-                    self.swapTiles(pos1, pos2)
+                    self.gameGridType.swapTiles(pos1, pos2)
                     self.frame.after(300, lambda p1=pos1, p2=pos2: self.checkAfterSwap(p1, p2))
                 else:
                     # Not adjacent, update selection to new tile
@@ -105,22 +105,6 @@ class CandyCrushGame(Game):
         row1, col1 = p1
         row2, col2 = p2
         return (row1 == row2 and abs(col1 - col2) == 1) or (col1 == col2 and abs(row1 - row2) == 1) # horizontal or vertical adjacent
-    
-    def swapTiles(self, p1, p2):
-        tile1 = self.gameGridType.getTileAt(p1)
-        tile2 = self.gameGridType.getTileAt(p2)
-            
-        temp_color_id = tile1.getColorId()
-        tile1.color_id = tile2.getColorId()
-        tile2.color_id = temp_color_id
-        
-        temp_color = tile1.color
-        tile1.color = tile2.color
-        tile2.color = temp_color
-        
-        # Update the UI
-        tile1.getFrame().config(bg=tile1.getColor())
-        tile2.getFrame().config(bg=tile2.getColor())
 
     def checkAfterSwap(self, p1, p2):
         matches = self.ruleChecking()
@@ -129,24 +113,7 @@ class CandyCrushGame(Game):
             self.movesLeft.config(text=f"Moves Left: {self.moves}")
             self.clearMatches(matches)
         else:
-            self.frame.after(200, lambda: self.swapTilesBack(p1, p2))
-        
-    def swapTilesBack(self, p1, p2):
-        tile1 = self.gameGridType.getTileAt(p1)
-        tile2 = self.gameGridType.getTileAt(p2)
-        
-        temp_color_id = tile1.getColorId()
-        tile1.color_id = tile2.getColorId()
-        tile2.color_id = temp_color_id
-        
-        temp_color = tile1.color
-        tile1.color = tile2.color
-        tile2.color = temp_color
-        
-        tile1.getFrame().config(bg=tile1.getColor())
-        tile2.getFrame().config(bg=tile2.getColor())
-        
-        self.is_animating = False
+            self.frame.after(200, lambda: self.gameGridType.swapTilesBack(p1, p2))
 
     def checkForMatches(self):
         matches = self.ruleChecking()
@@ -172,14 +139,6 @@ class CandyCrushGame(Game):
         self.updateScoreDisplay()
         self.removeMatches(positions_to_remove)
     
-    def removeMatches(self, positions):
-        for position in positions:
-            tile = self.gameGridType.getTileAt(position)
-            tile.color_id = 0
-            tile.color = "#FFFFFF"
-            tile.getFrame().config(bg=tile.getColor())
-        self.frame.after(300, self.dropTiles)
-    
     def dropTiles(self):
         dropped = self.gameGridType.updateTilePositions()
         if dropped:
@@ -187,6 +146,13 @@ class CandyCrushGame(Game):
         else:
             self.fillEmptySpaces()
 
+    def removeMatches(self, positions):
+        for position in positions:
+            tile = self.gameGridType.getTileAt(position)
+            tile.color_id = 0
+            tile.color = "#FFFFFF"
+            tile.getFrame().config(bg=tile.getColor())
+        self.frame.after(300, self.dropTiles)
     
     def fillEmptySpaces(self):
         empty_positions = []

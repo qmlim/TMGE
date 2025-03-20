@@ -41,6 +41,39 @@ class CandyCrushGrid(Grid):
         row, col = position
         return self.grid[row][col]
     
+    def swapTiles(self, p1, p2):
+        tile1 = self.getTileAt(p1)
+        tile2 = self.getTileAt(p2)
+            
+        temp_color_id = tile1.getColorId()
+        tile1.color_id = tile2.getColorId()
+        tile2.color_id = temp_color_id
+        
+        temp_color = tile1.color
+        tile1.color = tile2.color
+        tile2.color = temp_color
+        
+        # Update the UI
+        tile1.getFrame().config(bg=tile1.getColor())
+        tile2.getFrame().config(bg=tile2.getColor())
+
+    def swapTilesBack(self, p1, p2):
+        tile1 = self.getTileAt(p1)
+        tile2 = self.getTileAt(p2)
+        
+        temp_color_id = tile1.getColorId()
+        tile1.color_id = tile2.getColorId()
+        tile2.color_id = temp_color_id
+        
+        temp_color = tile1.color
+        tile1.color = tile2.color
+        tile2.color = temp_color
+        
+        tile1.getFrame().config(bg=tile1.getColor())
+        tile2.getFrame().config(bg=tile2.getColor())
+        
+        self.is_animating = False
+    
     def moveTile(self, p1, p2): # from p1 to p2
         t1 = self.getTileAt(p1)
         t2 = self.getTileAt(p2)
