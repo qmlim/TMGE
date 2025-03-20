@@ -1,11 +1,12 @@
 from tkinter import messagebox
+from tkinter import * 
 from Tetris.TetrisRules import TetrisRules
 from Game import Game
 from Tetris.TetrisGrid import TetrisGrid
 from Tetris.shape import TetrisShapeFactory
-from tkinter import * 
 from State import State
 from Tetris.TetrisScore import TetrisScore
+from Tetris.TetrisGameDisplay import TetrisGameDisplay
 
 
 
@@ -24,51 +25,60 @@ class TetrisGame(Game):
         self.fall_speed = 500
         self.gameState = State.RUNNING
         self.score_system = TetrisScore(self.scores.get(self.currentPlayer.username, 0), self.scores, self.currentPlayer)
-        
+
+        self.display = None
+        self.score_label = None
+
         self.spawn_new_shape()
 
+        
     def gameSetUp(self):
-        super().gameSetUp()
         self.generateGridFrame()
+        if not self.frame:
+            return  # Guard clause if frame generation failed
+
+        self.display = TetrisGameDisplay(self.frame, self.gameGridType)
+        super().gameSetUp()
         self.bind_keys(self.parent)
 
-        self.score_label = Label(self.frame, text=f"Score: {self.scores[self.currentPlayer.username]}", font=("Font", 15))
-        self.score_label.grid(row=4, column=20)
+        self.score_label = self.display.create_labels(self.scores[self.currentPlayer.username], self.currentPlayer.username)
 
-        Label(self.frame, text="Tetris", font=("Font", 20), width=12).grid(row=0, column=20)
-        Label(self.frame, text=f"Current Player: {self.currentPlayer.username}", font=("Font", 15)).grid(row=2, column=20)
-        Label(self.frame, text="Score:", font=("Font", 15)).grid(row=3, column=20)
-
-        self.updateGridDisplay()
-
+        self.display.update_grid_display()
         self.parent.after(self.fall_speed, self.auto_fall)
         return self.frame
 
+      
     def gamePlay(self):
         self.handleInput()
         self.ruleChecking()
-        self.updateGridDisplay()
+        if self.display:
+            self.display.update_grid_display()
 
+            
     def ruleChecking(self):
         self.rules.gameGrid = self.gameGridType.gameGrid
         filledRows = self.rules.checkRows()
 
         if self.checkIfShapeAtTop():
             self.gameOverPopUp()
+            return  # Guard clause — exit early if game over
 
         if filledRows:
             if len(filledRows) == 18:
                 self.gameOverPopUp()
             else:
-                self.gameGridType.updateGrid(filledRows)
-                self.score_system.calculateGameScore(len(filledRows))
-                self.score_system.updatePlayerScore()
+                self.handle_filled_rows(filledRows)
 
-                self.score_label.config(text=f"Score: {self.scores[self.currentPlayer.username]}")
+                
+    def handle_filled_rows(self, filledRows):
+        self.gameGridType.updateGrid(filledRows)
+        self.score_system.calculateGameScore(len(filledRows))
+        self.score_system.updatePlayerScore()
+        self.score_label.config(text=f"Score: {self.scores[self.currentPlayer.username]}")
+        if self.display:
+            self.display.update_grid_display()
 
-                self.updateGridDisplay()
-
-
+            
     def checkIfShapeAtTop(self):
         for col_idx in range(len(self.current_shape.shape_matrix[0])):
             if self.gameGridType.gameGrid[0][self.current_position[0] + col_idx].tileType == 2:
@@ -77,8 +87,8 @@ class TetrisGame(Game):
 
 
     def handleInput(self, event=None):
-        if self.gameState == State.GAME_OVER:
-            return
+        if not self.display:
+            return  # Guard clause if display is not ready
 
         if event:
             key = event.char.lower()
@@ -91,7 +101,7 @@ class TetrisGame(Game):
             elif key == 'w':
                 self.rotate_shape()
 
-        self.updateGridDisplay()
+        self.display.update_grid_display()
 
 
     def bind_keys(self, root):
@@ -106,11 +116,7 @@ class TetrisGame(Game):
 
     def auto_fall(self):
         if self.gameState != State.RUNNING:
-            return
-        
-        if self.checkIfShapeAtTop():
-            self.gameOverPopUp()
-            return
+            return  # Guard clause for non-running state
 
         if self.can_move(self.current_position[0], self.current_position[1] + 1):
             self.move_shape(0, 1)
@@ -119,7 +125,9 @@ class TetrisGame(Game):
             self.ruleChecking()
             self.spawn_new_shape()
 
-        self.updateGridDisplay()
+        if self.display:
+            self.display.update_grid_display()
+
         self.parent.after(self.fall_speed, self.auto_fall)
 
 
@@ -148,17 +156,18 @@ class TetrisGame(Game):
     def can_move(self, x, y):
         for row_idx, row in enumerate(self.current_shape.shape_matrix):
             for col_idx, cell in enumerate(row):
-                if cell:
-                    grid_x = x + col_idx
-                    grid_y = y + row_idx
+                if not cell:
+                    continue  # Guard clause for empty cells
 
-                    if grid_x < 0 or grid_x >= self.gameGridType.width:
-                        return False
-                    if grid_y < 0 or grid_y >= self.gameGridType.height:
-                        return False
+                grid_x = x + col_idx
+                grid_y = y + row_idx
 
-                    if self.gameGridType.gameGrid[grid_y][grid_x].tileType == 2:
-                        return False
+                if grid_x < 0 or grid_x >= self.gameGridType.width:
+                    return False
+                if grid_y < 0 or grid_y >= self.gameGridType.height:
+                    return False
+                if self.gameGridType.gameGrid[grid_y][grid_x].tileType == 2:
+                    return False
         return True
 
 
@@ -188,25 +197,11 @@ class TetrisGame(Game):
                     if 0 <= grid_x < self.gameGridType.width and 0 <= grid_y < self.gameGridType.height:
                         self.gameGridType.gameGrid[grid_y][grid_x].tileType = 1
 
-
-    def updateGridDisplay(self):
-        for i in range(self.gameGridType.height):
-            for j in range(self.gameGridType.width):
-                tile = self.gameGridType.gameGrid[i][j]
-                btn = self.frame.grid_slaves(row=i, column=j)[0]
-
-                if tile.tileType == 2:
-                    btn.config(text="⬛", bg="darkblue")
-                elif tile.tileType == 1:
-                    btn.config(text="🟦", bg="blue")
-                else:
-                    btn.config(text=" ", bg="white")
-
-
+                        
     def swapPlayer(self):
         for widget in self.frame.winfo_children():
             widget.destroy()
-        
+
         self.gameGridType = TetrisGrid()
         self.rules = TetrisRules(self.gameGridType.gameGrid)
         self.score_system = TetrisScore(0, self.scores, self.playerList[1])
@@ -215,7 +210,6 @@ class TetrisGame(Game):
         self.current_shape = None
         self.current_position = [3, 0]
         self.last_position = [0, 0]
-
         self.fall_speed = 500
         self.gameState = State.RUNNING
 
@@ -223,7 +217,6 @@ class TetrisGame(Game):
         self.bind_keys(self.parent)
         self.frame.focus_set()
         self.spawn_new_shape()
-
         self.showFrameFunc(self.frame)
 
 
@@ -237,6 +230,8 @@ class TetrisGame(Game):
                 TetrisScore.updatePlayerWins(winner)
                 messagebox.showinfo("GameOver!", f"{self.playerList[0].username}'s Score: {self.scores[self.playerList[0].username]}\n{self.currentPlayer.username}'s Score: {self.scores[self.currentPlayer.username]}\n{winner.username} Wins!")
             else:
+                TetrisScore.updatePlayerWins(self.playerList[0])
+                TetrisScore.updatePlayerWins(self.playerList[1])
                 messagebox.showinfo("GameOver!", f"{self.playerList[0].username}'s Score: {self.scores[self.playerList[0].username]}\n{self.currentPlayer.username}'s Score: {self.scores[self.currentPlayer.username]}\nTie!")
             self.gameState = State.GAME_OVER
             self.parent.after(100, lambda: self.showFrameFunc(self.mainMenuFrame))
