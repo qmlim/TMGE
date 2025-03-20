@@ -37,6 +37,9 @@ class TetrisGame(Game):
 
     def gameSetUp(self):
         self.generateGridFrame()
+        if not self.frame:
+            return  # Guard clause if frame generation failed
+
         self.display = TetrisGameDisplay(self.frame, self.gameGridType)
         super().gameSetUp()
         self.bind_keys(self.parent)
@@ -59,6 +62,7 @@ class TetrisGame(Game):
 
         if self.checkIfShapeAtTop():
             self.gameOverPopUp()
+            return  # Guard clause — exit early if game over
 
         if filledRows:
             if len(filledRows) == 18:
@@ -79,6 +83,9 @@ class TetrisGame(Game):
             return self.last_position[1] == self.current_position[1]
 
     def handleInput(self, event=None):
+        if not self.display:
+            return  # Guard clause if display is not ready
+
         if event:
             key = event.char.lower()
             if key == 'a':
@@ -89,8 +96,8 @@ class TetrisGame(Game):
                 self.move_shape(0, 1)
             elif key == 'w':
                 self.rotate_shape()
-        if self.display:
-            self.display.update_grid_display()
+
+        self.display.update_grid_display()
 
     def bind_keys(self, root):
         root.bind("<KeyPress>", self.handleInput)
@@ -102,7 +109,7 @@ class TetrisGame(Game):
 
     def auto_fall(self):
         if self.gameState != State.RUNNING:
-            return
+            return  # Guard clause for non-running state
 
         if self.can_move(self.current_position[0], self.current_position[1] + 1):
             self.move_shape(0, 1)
@@ -113,6 +120,7 @@ class TetrisGame(Game):
 
         if self.display:
             self.display.update_grid_display()
+
         self.parent.after(self.fall_speed, self.auto_fall)
 
     def move_shape(self, dx, dy):
@@ -138,15 +146,18 @@ class TetrisGame(Game):
     def can_move(self, x, y):
         for row_idx, row in enumerate(self.current_shape.shape_matrix):
             for col_idx, cell in enumerate(row):
-                if cell:
-                    grid_x = x + col_idx
-                    grid_y = y + row_idx
-                    if grid_x < 0 or grid_x >= self.gameGridType.width:
-                        return False
-                    if grid_y < 0 or grid_y >= self.gameGridType.height:
-                        return False
-                    if self.gameGridType.gameGrid[grid_y][grid_x].tileType == 2:
-                        return False
+                if not cell:
+                    continue  # Guard clause for empty cells
+
+                grid_x = x + col_idx
+                grid_y = y + row_idx
+
+                if grid_x < 0 or grid_x >= self.gameGridType.width:
+                    return False
+                if grid_y < 0 or grid_y >= self.gameGridType.height:
+                    return False
+                if self.gameGridType.gameGrid[grid_y][grid_x].tileType == 2:
+                    return False
         return True
 
     def lock_shape(self):
