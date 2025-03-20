@@ -200,11 +200,11 @@ def pickTwoPlayers():
 
     def addPlayer(player, playerInd):
         if len(currentplayers) < 2:
+            playerBtns[playerInd].config(state="disabled")
             currentplayers.append(player)
         if len(currentplayers) == 2:
             playerBtns[playerInd].config(state="disabled")
             selectWindow.destroy()
-        playerBtns[playerInd].config(state="disabled")
 
     for playerInd in range(len(players)):
         player = players[playerInd]
