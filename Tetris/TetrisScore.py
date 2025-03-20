@@ -22,3 +22,14 @@ class TetrisScore(ScoreSystem):
     def updatePlayerScore(self):
         self.calculateGameScore(1)
         self.updateScore()
+
+    def decideWinner(playersList, scores):
+        if scores[playersList[0].username] > scores[playersList[1].username]:
+            return playersList[0]
+        elif scores[playersList[0].username] < scores[playersList[1].username]:
+            return playersList[1]
+        else:
+            return None
+
+    def updatePlayerWins(player):
+        player.wins += 1

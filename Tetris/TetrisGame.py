@@ -1,9 +1,4 @@
-import sys
-import os
 from tkinter import messagebox
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
-from Player import Player
 from Tetris.TetrisRules import TetrisRules
 from Game import Game
 from Tetris.TetrisGrid import TetrisGrid
@@ -11,6 +6,8 @@ from Tetris.shape import TetrisShapeFactory
 from tkinter import * 
 from State import State
 from Tetris.TetrisScore import TetrisScore
+
+
 
 class TetrisGame(Game):
     def __init__(self, playerList, parent, mainMenuFrame, showFrameFunc):
@@ -73,10 +70,16 @@ class TetrisGame(Game):
 
 
     def checkIfShapeAtTop(self):
-        if 1 >= self.current_position[1] >= 0:
-            return self.last_position[1] == self.current_position[1]
+        for col_idx in range(len(self.current_shape.shape_matrix[0])):
+            if self.gameGridType.gameGrid[0][self.current_position[0] + col_idx].tileType == 2:
+                return True
+        return False
+
 
     def handleInput(self, event=None):
+        if self.gameState == State.GAME_OVER:
+            return
+
         if event:
             key = event.char.lower()
             if key == 'a':
@@ -90,16 +93,23 @@ class TetrisGame(Game):
 
         self.updateGridDisplay()
 
+
     def bind_keys(self, root):
         root.bind("<KeyPress>", self.handleInput)
+
 
     def spawn_new_shape(self):
         self.current_shape = TetrisShapeFactory.create_random_shape()
         self.current_position = [4, 0]
         self.place_shape_on_grid()
 
+
     def auto_fall(self):
         if self.gameState != State.RUNNING:
+            return
+        
+        if self.checkIfShapeAtTop():
+            self.gameOverPopUp()
             return
 
         if self.can_move(self.current_position[0], self.current_position[1] + 1):
@@ -112,6 +122,7 @@ class TetrisGame(Game):
         self.updateGridDisplay()
         self.parent.after(self.fall_speed, self.auto_fall)
 
+
     def move_shape(self, dx, dy):
         new_x = self.current_position[0] + dx
         new_y = self.current_position[1] + dy
@@ -122,6 +133,7 @@ class TetrisGame(Game):
             self.current_position = [new_x, new_y]
             self.place_shape_on_grid()
 
+
     def rotate_shape(self):
         old_matrix = self.current_shape.shape_matrix
         self.current_shape.rotate()
@@ -131,6 +143,7 @@ class TetrisGame(Game):
         else:
             self.clear_active_shape()
             self.place_shape_on_grid()
+
 
     def can_move(self, x, y):
         for row_idx, row in enumerate(self.current_shape.shape_matrix):
@@ -148,6 +161,7 @@ class TetrisGame(Game):
                         return False
         return True
 
+
     def lock_shape(self):
         for row_idx, row in enumerate(self.current_shape.shape_matrix):
             for col_idx, cell in enumerate(row):
@@ -157,11 +171,13 @@ class TetrisGame(Game):
                     if 0 <= grid_x < self.gameGridType.width and 0 <= grid_y < self.gameGridType.height:
                         self.gameGridType.gameGrid[grid_y][grid_x].tileType = 2
 
+
     def clear_active_shape(self):
         for row in self.gameGridType.gameGrid:
             for tile in row:
                 if tile.tileType == 1:
                     tile.tileType = 0
+
 
     def place_shape_on_grid(self):
         for row_idx, row in enumerate(self.current_shape.shape_matrix):
@@ -171,6 +187,7 @@ class TetrisGame(Game):
                     grid_y = self.current_position[1] + row_idx
                     if 0 <= grid_x < self.gameGridType.width and 0 <= grid_y < self.gameGridType.height:
                         self.gameGridType.gameGrid[grid_y][grid_x].tileType = 1
+
 
     def updateGridDisplay(self):
         for i in range(self.gameGridType.height):
@@ -184,6 +201,7 @@ class TetrisGame(Game):
                     btn.config(text="🟦", bg="blue")
                 else:
                     btn.config(text=" ", bg="white")
+
 
     def swapPlayer(self):
         for widget in self.frame.winfo_children():
@@ -208,14 +226,17 @@ class TetrisGame(Game):
 
         self.showFrameFunc(self.frame)
 
+
     def gameOverPopUp(self):
         if self.currentPlayer != self.playerList[1]:
             messagebox.showinfo("GameOver!", f"{self.currentPlayer.username}'s Score: {self.scores[self.currentPlayer.username]}\nNext game is {self.playerList[1].username}'s turn!")
             self.swapPlayer()
         else:
-            messagebox.showinfo("GameOver!", f"{self.playerList[0].username}'s Score: {self.scores[self.playerList[0].username]}\n{self.currentPlayer.username}'s Score: {self.scores[self.currentPlayer.username]}\n{self.playerList[0].username} Wins!")
+            winner = TetrisScore.decideWinner(self.playerList, self.scores)
+            if winner:
+                TetrisScore.updatePlayerWins(winner)
+                messagebox.showinfo("GameOver!", f"{self.playerList[0].username}'s Score: {self.scores[self.playerList[0].username]}\n{self.currentPlayer.username}'s Score: {self.scores[self.currentPlayer.username]}\n{winner.username} Wins!")
+            else:
+                messagebox.showinfo("GameOver!", f"{self.playerList[0].username}'s Score: {self.scores[self.playerList[0].username]}\n{self.currentPlayer.username}'s Score: {self.scores[self.currentPlayer.username]}\nTie!")
             self.gameState = State.GAME_OVER
             self.parent.after(100, lambda: self.showFrameFunc(self.mainMenuFrame))
-
-if __name__ == "__main__":
-    TetrisGame([], None)
