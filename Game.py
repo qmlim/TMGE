@@ -30,10 +30,11 @@ class Game(ABC):
         return self.frame
 
     def backButton(self):
-        backButton = tk.Button(self.frame, text="Back", command=self.backToMenu)
+        backButton = tk.Button(self.frame, text="Back To Menu", command=self.backToMenu)
         backButton.grid(row=self.gameGridType.height + 1, column=0, columnspan=self.gameGridType.width, pady=10)
 
     def backToMenu(self):
+        self.frame.destroy()
         self.showFrameFunc(self.mainMenuFrame)
 
     @abstractmethod

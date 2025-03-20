@@ -34,7 +34,7 @@ def main():
         anchor="center").pack(pady=10, padx=20)
     tk.Label(
         mainMenuFrame, 
-        text="Please sign up before selecting a game.", 
+        text="Please sign up two players before selecting a game.", 
         font=("Font", 15)).pack(pady=(30, 0), padx=5, fill="x")
     tk.Button(
         mainMenuFrame,
